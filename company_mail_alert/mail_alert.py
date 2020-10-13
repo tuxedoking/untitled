@@ -8,7 +8,7 @@ from email.header import Header
 def sendqqmail():
     sender = '387889277@qq.com'
     receivers = ['387889277@qq.com']
-    message = MIMEText('zhouli01有新邮件', 'plain', 'utf-8')
+    message = MIMEText('zhouli01@feidai.com 有新邮件', 'plain', 'utf-8')
     message['From'] = Header('tuxedo', 'utf-8')
     message['To'] = Header('tuxedo', 'utf-8')
     subject = 'zhouli01@feidai.com 新邮件提醒'
