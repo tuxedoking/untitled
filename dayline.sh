@@ -1,3 +1,2 @@
-cd /home/zhouli/PycharmProjects/untitled
-source venv/bin/activate
-python dayline.py
+source activate untitled
+python /home/zhouli/untitled/dayline.py

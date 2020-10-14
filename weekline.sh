@@ -1,3 +1,2 @@
-cd /home/zhouli/PycharmProjects/untitled
-source venv/bin/activate
-python weekline.py
+source activate untitled
+python /home/zhouli/untitled/weekline.py
