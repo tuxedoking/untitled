@@ -1,11 +1,14 @@
 from datasource_tushare import datasource_ts as dsts
+import json
 from datasource_tushare import mysql_helper as mh
 
 
+'''
 if __name__ == '__main__':
     try:
         ds = dsts.Datasource()
         df = ds.get_code_list()
+        print(df.to_dict())
         mysql = mh.Mysql_Helper()
         for row in df.itertuples():
             #print(row) print(row.Index, row.ts_code, row.symbol, row.name, row.area, row.industry, row.list_date)
@@ -16,3 +19,21 @@ if __name__ == '__main__':
         print(err)
     finally:
         mysql.close()
+'''
+
+
+if __name__ == '__main__':
+    try:
+        ds = dsts.Datasource()
+        df = ds.get_code_list()
+        #mysql = mh.Mysql_Helper()
+        d = {}
+        for row in df.itertuples():
+            d[row.symbol] = row.name
+        str = json.dumps(d, ensure_ascii=False)
+        print(str)
+        e = json.loads(str)
+        print(e)
+        print(type(e))
+    except Exception as err:
+        print(err)
