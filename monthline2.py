@@ -16,7 +16,7 @@ if __name__ == '__main__':
                 monthlines = pickle.loads(data)
             else:
                 monthlines = {}
-            df2 = ds.get_monthline(row.ts_code, '19800901')
+            df2 = ds.get_monthline(row.ts_code)
             if df2 is None:
                 continue
             for row in df2.itertuples():

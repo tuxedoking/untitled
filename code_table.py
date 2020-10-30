@@ -1,6 +1,6 @@
-from datasource_tushare import datasource_ts as dsts
+#from datasource_tushare import datasource_ts as dsts
+import datasource_tushare.datasource_ts as dsts
 import json
-from datasource_tushare import mysql_helper as mh
 
 
 '''
@@ -26,7 +26,6 @@ if __name__ == '__main__':
     try:
         ds = dsts.Datasource()
         df = ds.get_code_list()
-        #mysql = mh.Mysql_Helper()
         d = {}
         for row in df.itertuples():
             d[row.symbol] = row.name

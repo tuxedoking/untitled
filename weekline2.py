@@ -16,7 +16,7 @@ if __name__ == '__main__':
                 weeklines = pickle.loads(data)
             else:
                 weeklines = {}
-            df2 = ds.get_weekline(row.ts_code, '19800901')
+            df2 = ds.get_weekline(row.ts_code)
             if df2 is None:
                 continue
             for row in df2.itertuples():
