@@ -1,7 +1,9 @@
 from datasource_tushare import datasource_ts as dsts
+from zhibiao_calculator import pma_calculator
 from math import isnan
 import dbm
 import json
+
 
 
 if __name__ == '__main__':
@@ -28,10 +30,13 @@ if __name__ == '__main__':
                 if isnan(row.close):
                     continue
                 if row.trade_date not in daylines:
+                    daylines[row.trade_date] = {}
                     daylines[row.trade_date]['raw'] = [row.open, row.high, row.low, row.close, row.pre_close, row.vol, row.amount]
 
             #for key, value in daylines.items():
             #    print(row.ts_code, key, value)
+
+            pma_calculator.cal_pmas(daylines)
             db[row.ts_code] = json.dumps(daylines)
         db.close()
     except Exception as err:
