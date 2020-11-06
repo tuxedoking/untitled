@@ -28,7 +28,7 @@ if __name__ == '__main__':
                 if isnan(row.close):
                     continue
                 if row.trade_date not in daylines:
-                    daylines[row.trade_date] = [row.open, row.high, row.low, row.close, row.pre_close, row.vol, row.amount]
+                    daylines[row.trade_date]['raw'] = [row.open, row.high, row.low, row.close, row.pre_close, row.vol, row.amount]
 
             #for key, value in daylines.items():
             #    print(row.ts_code, key, value)
