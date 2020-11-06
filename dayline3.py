@@ -19,8 +19,8 @@ if __name__ == '__main__':
             if data is not None:
                 daylines = json.loads(data)
 
-            df2 = ds.get_dayline(row.ts_code)
-            #df2 = ds.get_dayline(row.ts_code, start_date='19800101')
+            #df2 = ds.get_dayline(row.ts_code)
+            df2 = ds.get_dayline(row.ts_code, start_date='19800101')
             if df2 is None:
                 continue
             for row in df2.itertuples():
@@ -29,7 +29,9 @@ if __name__ == '__main__':
                     continue
                 if row.trade_date not in daylines:
                     daylines[row.trade_date] = [row.open, row.high, row.low, row.close, row.pre_close, row.vol, row.amount]
-            #db.put(bytes(row.ts_code, encoding='utf8'), pickle.dumps(daylines))
+
+            #for key, value in daylines.items():
+            #    print(row.ts_code, key, value)
             db[row.ts_code] = json.dumps(daylines)
         db.close()
     except Exception as err:
