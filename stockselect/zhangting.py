@@ -1,12 +1,14 @@
 import dbm
-import json
+import pickle
 import sys
+import code_table
 
 
 if __name__ == '__main__':
     print(sys.argv)
     startdate = 19800101
     enddate = 20500101
+    code_table = code_table.read_codetable()
     for i in range(len(sys.argv)):
         if i == 1:
             startdate = int(sys.argv[1])
@@ -17,15 +19,15 @@ if __name__ == '__main__':
         db = dbm.open('../dayline.dbm')
         for key in db.keys():
             data = db[key]
-            daylines = json.loads(data)
+            daylines = pickle.loads(data)
             code = bytes.decode(key)
             for date in sorted(daylines):
                 if int(date) >= startdate and int(date) <= enddate:
-                    preclose = daylines[date][4]
-                    close = daylines[date][0]
+                    preclose = daylines[date]['raw'][4]
+                    close = daylines[date]['raw'][0]
                     zhangfu = (close-preclose)/preclose
                     if zhangfu > 0.09:
-                        print(code, date)
+                        print(code, code_table[code], date)
                     #print(code, date, daylines[date])
         db.close()
     except Exception as err:

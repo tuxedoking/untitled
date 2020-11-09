@@ -2,8 +2,7 @@ from datasource_tushare import datasource_ts as dsts
 from zhibiao_calculator import pma_calculator
 from math import isnan
 import dbm
-import json
-
+import pickle
 
 
 if __name__ == '__main__':
@@ -19,7 +18,8 @@ if __name__ == '__main__':
             except KeyError:
                 pass
             if data is not None:
-                daylines = json.loads(data)
+                daylines = pickle.loads(data)
+                #daylines = json.loads(data)
 
             #df2 = ds.get_dayline(row.ts_code)
             df2 = ds.get_dayline(row.ts_code, start_date='19800101')
@@ -37,7 +37,8 @@ if __name__ == '__main__':
             #    print(row.ts_code, key, value)
 
             pma_calculator.cal_pmas(daylines)
-            db[row.ts_code] = json.dumps(daylines)
+            db[row.ts_code] = pickle.dumps(daylines)
+            #db[row.ts_code] = json.dumps(daylines)
         db.close()
     except Exception as err:
         print(err)

@@ -1,6 +1,7 @@
 #from datasource_tushare import datasource_ts as dsts
 import datasource_tushare.datasource_ts as dsts
 import json
+import dbm
 
 
 '''
@@ -21,18 +22,30 @@ if __name__ == '__main__':
         mysql.close()
 '''
 
-
-if __name__ == '__main__':
+def read_codetable():
     try:
+        db = dbm.open('../codetable.dbm')
+        d = {}
+        for key in db.keys():
+            d[bytes.decode(key)] = bytes.decode(db[key])
+        return d
+    except Exception as err:
+        return None
+
+
+def write_codetable():
+    try:
+        db = dbm.open('codetable.dbm', 'c')
         ds = dsts.Datasource()
         df = ds.get_code_list()
-        d = {}
         for row in df.itertuples():
-            d[row.symbol] = row.name
-        str = json.dumps(d, ensure_ascii=False)
-        print(str)
-        e = json.loads(str)
-        print(e)
-        print(type(e))
+            db[row.ts_code] = row.name
+        db.close()
     except Exception as err:
         print(err)
+
+
+if __name__ == '__main__':
+   codetable = read_codetable()
+   for key,value in codetable.items():
+       print(key,value)

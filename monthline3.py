@@ -1,7 +1,8 @@
 from datasource_tushare import datasource_ts as dsts
+from zhibiao_calculator import pma_calculator
 from math import isnan
 import dbm
-import json
+import pickle
 
 
 if __name__ == '__main__':
@@ -17,10 +18,10 @@ if __name__ == '__main__':
             except KeyError:
                 pass
             if data is not None:
-                monthlines = json.loads(data)
+                monthlines = pickle.loads(data)
 
-            df2 = ds.get_monthline(row.ts_code)
-            #df2 = ds.get_monthline(row.ts_code, start_date='19800101')
+            #df2 = ds.get_monthline(row.ts_code)
+            df2 = ds.get_monthline(row.ts_code, start_date='19800101')
             if df2 is None:
                 continue
             for row in df2.itertuples():
@@ -28,8 +29,11 @@ if __name__ == '__main__':
                 if isnan(row.close):
                     continue
                 if row.trade_date not in monthlines:
-                    monthlines[row.trade_date] = [row.open, row.high, row.low, row.close, row.pre_close, row.vol, row.amount]
-            db[row.ts_code] = json.dumps(monthlines)
+                    monthlines[row.trade_date] = {}
+                    monthlines[row.trade_date]['raw'] = [row.open, row.high, row.low, row.close, row.pre_close, row.vol, row.amount]
+
+            pma_calculator.cal_pmas(monthlines)
+            db[row.ts_code] = pickle.dumps(monthlines)
         db.close()
     except Exception as err:
         print(err)
