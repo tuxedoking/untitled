@@ -3,9 +3,7 @@ import pickle
 import sys
 import code_table
 
-
 if __name__ == '__main__':
-    print(sys.argv)
     startdate = 19800101
     enddate = 20500101
     code_table = code_table.read_codetable()
@@ -16,7 +14,7 @@ if __name__ == '__main__':
             enddate = int(sys.argv[2])
 
     try:
-        db = dbm.open('../dayline.dbm')
+        db = dbm.open('E:/PycharmProjects/dbms/dayline.dbm')
         for key in db.keys():
             data = db[key]
             daylines = pickle.loads(data)

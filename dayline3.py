@@ -7,7 +7,7 @@ import pickle
 
 if __name__ == '__main__':
     try:
-        db = dbm.open('dayline.dbm', 'c')
+        db = dbm.open('E:/PycharmProjects/dbms/dayline.dbm', 'c')
         ds = dsts.Datasource()
         df = ds.get_code_list()
         for row in df.itertuples():
@@ -21,8 +21,8 @@ if __name__ == '__main__':
                 daylines = pickle.loads(data)
                 #daylines = json.loads(data)
 
-            #df2 = ds.get_dayline(row.ts_code)
-            df2 = ds.get_dayline(row.ts_code, start_date='19800101')
+            df2 = ds.get_dayline(row.ts_code)
+            #df2 = ds.get_dayline(row.ts_code, start_date='19800101')
             if df2 is None:
                 continue
             for row in df2.itertuples():
