@@ -3,7 +3,7 @@ import pymysql
 
 class Mysql_Helper:
     def __init__(self):
-        self.connection = pymysql.connect(host='127.0.0.1', port=3306, user='root', password='123456', db='stock2', autocommit=True)
+        self.connection = pymysql.connect(host='localhost', port=3306, user='root', password='zhouli20160101', db='stock', autocommit=True)
 
     def runsql(self, sql):
         cursor = self.connection.cursor()
