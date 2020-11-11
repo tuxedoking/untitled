@@ -3,11 +3,12 @@ from zhibiao_calculator import pma_calculator
 from math import isnan
 import dbm
 import pickle
+import os
 
 
 if __name__ == '__main__':
     try:
-        db = dbm.open('E:/PycharmProjects/dbms/monthline.dbm', 'c')
+        db = dbm.open(os.getcwd() + '/dbms/monthline.dbm', 'c')
         ds = dsts.Datasource()
         df = ds.get_code_list()
         for row in df.itertuples():

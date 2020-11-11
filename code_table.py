@@ -2,11 +2,12 @@
 import datasource_tushare.datasource_ts as dsts
 import json
 import dbm
+import os
 
 
 def read_codetable():
     try:
-        db = dbm.open('E:/PycharmProjects/dbms/codetable.dbm')
+        db = dbm.open(os.getcwd() + '/dbms/codetable.dbm')
         d = {}
         for key in db.keys():
             d[bytes.decode(key)] = bytes.decode(db[key])
@@ -17,7 +18,7 @@ def read_codetable():
 
 def write_codetable():
     try:
-        db = dbm.open('E:/PycharmProjects/dbms/codetable.dbm', 'c')
+        db = dbm.open(os.getcwd() + '/dbms/codetable.dbm', 'c')
         ds = dsts.Datasource()
         df = ds.get_code_list()
         for row in df.itertuples():
@@ -29,8 +30,7 @@ def write_codetable():
 
 if __name__ == '__main__':
     write_codetable()
-    '''
-   codetable = read_codetable()
-   for key,value in codetable.items():
-       print(key,value)
-    '''
+
+    codetable = read_codetable()
+    for key,value in codetable.items():
+        print(key,value)

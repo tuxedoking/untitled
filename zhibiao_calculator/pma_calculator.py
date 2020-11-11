@@ -1,5 +1,6 @@
 import dbm
 import json
+import os
 
 
 def cal_pmas(lines):
@@ -25,7 +26,7 @@ def cal_pmas(lines):
 
 if __name__ == '__main__':
     try:
-        db = dbm.open('../dayline.dbm', 'c')
+        db = dbm.open(os.getcwd() + '/dbms/dayline.dbm', 'c')
         for key in db.keys():
             print(key)
             data = db[key]
