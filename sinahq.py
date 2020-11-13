@@ -13,11 +13,11 @@ def getsinahq(code):
         l2 = l1[1].split(',')
         d = {}
         d['name'] = l2[0]
-        d['open'] = l2[1]
-        d['last'] = l2[2]
-        d['close'] = l2[3]
-        d['high'] = l2[4]
-        d['low'] = l2[5]
+        d['open'] = float(l2[1])
+        d['last'] = float(l2[2])
+        d['close'] = float(l2[3])
+        d['high'] = float(l2[4])
+        d['low'] = float(l2[5])
         return d
     except Exception as err:
         print(err)
@@ -35,12 +35,12 @@ if __name__ == '__main__':
             continue
         else:
             if d['close'] >= d['last']:
-                print('\033[31m' + d['close'] + '\033[0m')
+                print('\033[31m' + round(d['close'],2) + '\033[0m')
             else:
-                print('\033[40m' + d['close'] + '\033[0m')
+                print('\033[40m' + round(d['close'],2) + '\033[0m')
 
             if d2['close'] >= d2['last']:
-                print('\033[31m' + d2['close'] + '\033[0m')
+                print('\033[31m' + round(d2['close'],2) + '\033[0m')
             else:
-                print('\033[40m' + d2['close'] + '\033[0m')
+                print('\033[40m' + round(d2['close'],2) + '\033[0m')
         time.sleep(3)
