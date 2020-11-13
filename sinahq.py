@@ -27,20 +27,16 @@ def getsinahq(code):
 
 
 if __name__ == '__main__':
+    a = ['sh600549', 'sh000001']
     while True:
-        #print('\033[31m'+getsinahq('sh600549')['close']+'\033[0m')
-        d = getsinahq('sh600549')
-        d2 = getsinahq('sh000001')
-        if d is None:
-            continue
-        else:
-            if d['close'] >= d['last']:
-                print('\033[31m' + str(round(d['close'], 2)) + '\033[0m')
+        for code in a:
+            d = getsinahq(code)
+            if d is None:
+                continue
             else:
-                print('\033[40m' + str(round(d['close'], 2)) + '\033[0m')
-
-            if d2['close'] >= d2['last']:
-                print('\033[31m' + str(round(d2['close'], 2)) + '\033[0m')
-            else:
-                print('\033[40m' + str(round(d2['close'], 2)) + '\033[0m')
+                zf = str(round((d['close'] - d['last']) / d['close'], 2))
+                if d['close'] >= d['last']:
+                    print('\033[31m' + str(round(d['close'], 2)) + zf + '\033[0m')
+                else:
+                    print('\033[40m' + str(round(d['close'], 2)) + zf + '\033[0m')
         time.sleep(3)
