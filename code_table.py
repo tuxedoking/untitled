@@ -49,5 +49,5 @@ if __name__ == '__main__':
     write_codetable2db()
 
     codetable = read_codetable()
-    for key,value in codetable.items():
-        print(key,value)
+    for key, value in codetable.items():
+        print(key, value)
