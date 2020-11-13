@@ -35,12 +35,12 @@ if __name__ == '__main__':
             continue
         else:
             if d['close'] >= d['last']:
-                print('\033[31m' + round(d['close'], 2) + '\033[0m')
+                print('\033[31m' + str(round(d['close'], 2)) + '\033[0m')
             else:
-                print('\033[40m' + round(d['close'], 2) + '\033[0m')
+                print('\033[40m' + str(round(d['close'], 2)) + '\033[0m')
 
             if d2['close'] >= d2['last']:
-                print('\033[31m' + round(d2['close'], 2) + '\033[0m')
+                print('\033[31m' + str(round(d2['close'], 2)) + '\033[0m')
             else:
-                print('\033[40m' + round(d2['close'], 2) + '\033[0m')
+                print('\033[40m' + str(round(d2['close'], 2)) + '\033[0m')
         time.sleep(3)
