@@ -17,6 +17,29 @@ def read_codetable():
         return None
 
 
+def read_codetable_kzz():
+    try:
+        db = dbm.open(os.getcwd() + '/dbms/codetable_kzz.dbm')
+        d = {}
+        for key in db.keys():
+            d[bytes.decode(key)] = bytes.decode(db[key])
+        return d
+    except Exception as err:
+        return None
+
+
+def write_codetable_kzz():
+    try:
+        db = dbm.open(os.getcwd() + '/dbms/codetable_kzz.dbm', 'c')
+        ds = dsts.Datasource()
+        df = ds.get_code_list_kzz()
+        for row in df.itertuples():
+            db[row.ts_code] = row.bond_short_name
+        db.close()
+    except Exception as err:
+        print(err)
+
+
 def write_codetable():
     try:
         db = dbm.open(os.getcwd() + '/dbms/codetable.dbm', 'c')
@@ -47,7 +70,12 @@ def write_codetable2db():
 if __name__ == '__main__':
     write_codetable()
     write_codetable2db()
+    write_codetable_kzz()
 
     codetable = read_codetable()
     for key, value in codetable.items():
+        print(key, value)
+
+    codetable_kzz = read_codetable_kzz()
+    for key, value in codetable_kzz.items():
         print(key, value)
