@@ -1,13 +1,13 @@
 import dbm
 import pickle
 import sys
-import code_table
+import codetable
 import os
 
 if __name__ == '__main__':
     startdate = 19800101
     enddate = 20500101
-    code_table = code_table.read_codetable()
+    code_table = codetable.read_codetable()
     for i in range(len(sys.argv)):
         if i == 1:
             startdate = int(sys.argv[1])

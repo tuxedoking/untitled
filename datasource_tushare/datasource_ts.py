@@ -13,6 +13,9 @@ class Datasource:
     def get_code_list(self):
         return self.pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
 
+    def get_code_list_kzz(self):
+        return self.pro.cb_basic(fields="ts_code,bond_short_name,stk_code,stk_short_name,list_date,delist_date")
+
     def get_dayline(self, code='000001.SZ', start_date=None, end_date=None):
         today = date.today()
         if start_date is None:
@@ -56,6 +59,15 @@ class Datasource:
         for row in df.itertuples():
             print(row)
 
+
+if __name__ == '__main__':
+    ds = Datasource()
+    df = ds.get_code_list_kzz()
+    if df is None:
+        print("get code list error")
+    for row in df.itertuples():
+        print(row)
+
 '''
 if __name__ == '__main__':
     ds = Datasource()
@@ -65,11 +77,11 @@ if __name__ == '__main__':
     for row in df.itertuples():
         print(row.Index, row.ts_code, row.symbol, row.name, row.area, row.industry, row.list_date)
 '''
-
+'''
 if __name__ == '__main__':
     ds = Datasource()
     print(ds.get_monthline())
-
+'''
 '''
 if __name__ == '__main__':
     ds = Datasource()
