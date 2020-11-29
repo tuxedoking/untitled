@@ -1,5 +1,5 @@
 from datasource_tushare import datasource_ts as dsts
-from zhibiao_calculator import pma_calculator
+import pma_calculator
 from math import isnan
 import dbm
 import pickle

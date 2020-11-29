@@ -62,16 +62,14 @@ if __name__ == '__main__':
 if __name__ == '__main__':
     try:
         print(os.getcwd())
-        db = dbm.open(os.getcwd() + '../dbms/dayline.dbm')
+        db = dbm.open(os.getcwd() + '/../dbms/dayline.dbm')
         for key in db.keys():
             print(key)
             data = db[key]
             daylines = json.loads(data)
-            daycount = cal250up(daylines)
-            if daycount >= 30:
-                print(key)
-
-            #code = bytes.decode(key)
+            # daycount = cal250up(daylines)
+            # if daycount >= 30:
+            #     print(key)
         db.close()
     except Exception as err:
         print(err)
