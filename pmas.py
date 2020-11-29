@@ -1,6 +1,7 @@
 import dbm
-import json
+import pickle
 import os
+import sys
 
 
 def cal_pmas(lines):
@@ -27,19 +28,30 @@ def cal_pmas(lines):
 def cal250up(lines):
     count = 0
     last = -1
+    flag = False
+    count2 = 0
     for date in sorted(lines, reverse=True):
         if 'pma250' not in lines[date]:
-            return 0
+            break
         else:
             if last == -1:
-                last = lines[date]['pma250']
+                lastest = lines[date]['pma250']
+                last = lastest
                 continue
             else:
-                if lines[date]['pma250'] <= last:
-                    count += 1
+                pma250 = lines[date]['pma250']
+                if pma250 <= last:
+                    if flag = False:
+                        last = pma250
+                        count += 1
                 else:
+                    flag = True
+                    count2 += 1
                     break
-    return count
+    if count == 0:
+        return 0, 0.0
+    return count, 100*(lastest - pma250)/pma250
+    #return count
 
 
 '''
@@ -62,21 +74,23 @@ if __name__ == '__main__':
 if __name__ == '__main__':
     try:
         print(os.getcwd())
-        db = dbm.open(os.getcwd() + '/../dbms/dayline.dbm')
+        db = dbm.open(os.getcwd() + '/dbms/dayline.dbm')
         for key in db.keys():
-            print(key)
             data = db[key]
-            daylines = json.loads(data)
-            # daycount = cal250up(daylines)
-            # if daycount >= 30:
-            #     print(key)
+            code = bytes.decode(key)
+            #print(code)
+            if code == '600549.SH':
+                iii = 999
+            daylines = pickle.loads(data)
+            daycount,fd = cal250up(daylines)
+            if daycount >= 30 and daycount < 200 and fd > 3:
+                print(code, daycount, fd)
         db.close()
     except Exception as err:
-        print(err)
+        s = sys.exc_info()
+        print(err, s[2].tb_lineno)
     finally:
         pass
-
-
 
 
 
