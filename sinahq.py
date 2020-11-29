@@ -42,7 +42,7 @@ if __name__ == '__main__':
 '''
 
 if __name__ == '__main__':
-    codes = ['sh000001', 'sh600549', 'sh601168', 'sh603167']
+    codes = ['sh000001', 'sh600549', 'sh601168', 'sh601360']
     while True:
         hqlist = getsinahq(codes)
         if hqlist is None:

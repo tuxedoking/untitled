@@ -40,7 +40,7 @@ def write_codetable_kzz():
         print(err)
 
 
-def write_codetable():
+def write_codetable2dbm():
     try:
         db = dbm.open(os.getcwd() + '/dbms/codetable.dbm', 'c')
         ds = dsts.Datasource()
@@ -68,7 +68,7 @@ def write_codetable2db():
 
 
 if __name__ == '__main__':
-    write_codetable()
+    write_codetable2dbm()
     write_codetable2db()
     write_codetable_kzz()
 
