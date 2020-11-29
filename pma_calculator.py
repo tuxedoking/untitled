@@ -61,7 +61,8 @@ if __name__ == '__main__':
 '''
 if __name__ == '__main__':
     try:
-        db = dbm.open(os.getcwd() + '/dbms/dayline.dbm')
+        print(os.getcwd())
+        db = dbm.open(os.getcwd() + '../dbms/dayline.dbm')
         for key in db.keys():
             print(key)
             data = db[key]
