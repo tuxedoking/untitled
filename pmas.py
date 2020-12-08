@@ -25,6 +25,62 @@ def cal_pmas(lines):
             lines[date]['pma250'] = sum(pmas[-250:])/250
 
 
+def cal_pma_bolang(lines, str_='250'):
+    str = 'pma' + str_
+    fromdate = 0
+    lastdate = 0
+    qushi = -1  #-1趋势不明　1-趋势上升　2-趋势下降
+    ret = []
+
+    for date in sorted(lines):
+        if str not in lines[date]:
+            continue
+        else:
+            pma = lines[date][str]
+            if fromdate == 0:
+                fromdate = date
+                qushi = -1
+                lastpma = pma
+                lastdate = date
+                continue
+            if qushi == -1:
+                if pma > lastpma:
+                    qushi = 1
+                elif pma < lastpma:
+                    qushi = 2
+                elif pma == lastpma:
+                    fromdate = date
+                lastpma = pma
+                lastdate = date
+            if qushi == 1:
+                if pma > lastpma:
+                    pass
+                elif pma < lastpma:
+                    t = (fromdate,lastdate,qushi)
+                    ret.append(t)
+                    fromdate = lastdate
+                    lastdate = date
+                    qushi = 2
+                elif pma == lastpma:
+                    pass
+                lastpma = pma
+            if qushi == 2:
+                if pma < lastpma:
+                    t = (fromdate, lastdate, qushi)
+                    ret.append(t)
+                    fromdate = lastdate
+                    lastdate = date
+                    qushi = 1
+                elif pma > lastpma:
+                    pass
+
+
+
+
+
+
+
+
 def cal250up(lines):
     count = 0
     last = -1
