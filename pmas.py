@@ -97,7 +97,7 @@ def cal250up(lines):
             else:
                 pma250 = lines[date]['pma250']
                 if pma250 <= last:
-                    if flag = False:
+                    if flag == False:
                         last = pma250
                         count += 1
                 else:
