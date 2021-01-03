@@ -1,5 +1,5 @@
 from datasource_tushare import datasource_ts as dsts
-import pma_calculator
+import pmas
 from math import isnan
 import dbm
 import pickle
@@ -37,7 +37,7 @@ if __name__ == '__main__':
             #for key, value in daylines.items():
             #    print(row.ts_code, key, value)
 
-            pma_calculator.cal_pmas(daylines)
+            pmas.cal_pmas(daylines)
             db[row.ts_code] = pickle.dumps(daylines)
             #db[row.ts_code] = json.dumps(daylines)
         db.close()

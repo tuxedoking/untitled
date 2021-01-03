@@ -9,7 +9,7 @@ if __name__ == '__main__':
         df = ds.get_code_list()
         for row in df.itertuples():
             # print(row) print(row.Index, row.ts_code, row.symbol, row.name, row.area, row.industry, row.list_date)
-            #df2 = ds.get_dayline(row.ts_code, '19800101')
+            #df2 = ds.get_dayline(row.ts_code, '20201201')
             df2 = ds.get_dayline(row.ts_code)
             if df2 is None:
                 continue
