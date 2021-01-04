@@ -30,6 +30,7 @@ def cal_pma_bolang(lines, str_='250'):
     fromdate = 0
     lastdate = 0
     qushi = -1  #-1趋势不明　1-趋势上升　2-趋势下降
+    count = 0
     ret = []
 
     for date in sorted(lines):
@@ -46,68 +47,39 @@ def cal_pma_bolang(lines, str_='250'):
             if qushi == -1:
                 if pma > lastpma:
                     qushi = 1
+                    count = 1
                 elif pma < lastpma:
                     qushi = 2
+                    count = 1
                 elif pma == lastpma:
                     fromdate = date
                 lastpma = pma
                 lastdate = date
             if qushi == 1:
-                if pma > lastpma:
+                if pma >= lastpma:
+                    count += 1
                     pass
                 elif pma < lastpma:
-                    t = (fromdate,lastdate,qushi)
+                    t = (fromdate, lastdate, qushi, count)
                     ret.append(t)
-                    fromdate = lastdate
-                    lastdate = date
+                    fromdate = date
                     qushi = 2
-                elif pma == lastpma:
-                    pass
+                    count = 1
                 lastpma = pma
+                lastdate = date
             if qushi == 2:
-                if pma < lastpma:
-                    t = (fromdate, lastdate, qushi)
-                    ret.append(t)
-                    fromdate = lastdate
-                    lastdate = date
-                    qushi = 1
-                elif pma > lastpma:
+                if pma <= lastpma:
+                    count += 1
                     pass
-
-
-
-
-
-
-
-
-def cal250up(lines):
-    count = 0
-    last = -1
-    flag = False
-    count2 = 0
-    for date in sorted(lines, reverse=True):
-        if 'pma250' not in lines[date]:
-            break
-        else:
-            if last == -1:
-                lastest = lines[date]['pma250']
-                last = lastest
-                continue
-            else:
-                pma250 = lines[date]['pma250']
-                if pma250 <= last:
-                    if flag == False:
-                        last = pma250
-                        count += 1
-                else:
-                    flag = True
-                    count2 += 1
-                    break
-    if count == 0:
-        return 0, 0.0
-    return count, 100*(lastest - pma250)/pma250
-    #return count
+                elif pma > lastpma:
+                    t = (fromdate, lastdate, qushi, count)
+                    ret.append(t)
+                    fromdate = date
+                    qushi = 1
+                    count = 1
+                lastpma = pma
+                lastdate = date
+    return ret
 
 
 '''
@@ -134,13 +106,12 @@ if __name__ == '__main__':
         for key in db.keys():
             data = db[key]
             code = bytes.decode(key)
-            #print(code)
-            if code == '600549.SH':
-                iii = 999
+            print(code)
+            #if code == '600549.SH':
+            #    iii = 999
             daylines = pickle.loads(data)
-            daycount,fd = cal250up(daylines)
-            if daycount >= 30 and daycount < 200 and fd > 3:
-                print(code, daycount, fd)
+            pmabolangs = cal_pma_bolang(daylines)
+            print(pmabolangs)
         db.close()
     except Exception as err:
         s = sys.exc_info()
