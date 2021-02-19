@@ -15,14 +15,6 @@ if __name__ == '__main__':
                 print(code, date)
                 break
         db.close()
-
-        db_bo_lang_s = dbm.open(os.getcwd() + '/dbms/bo_lang_s.dbm')
-        for key in db_bo_lang_s.keys():
-            data = db_bo_lang_s[key]
-            bo_lang_s = pickle.loads(data)
-            code = bytes.decode(key)
-            print(code, bo_lang_s)
-        db_bo_lang_s.close()
     except Exception as err:
         print(err)
     finally:

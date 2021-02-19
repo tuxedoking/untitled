@@ -4,10 +4,12 @@ from math import isnan
 import dbm
 import pickle
 import os
+import bolangs
 
 
 if __name__ == '__main__':
     try:
+        db_bo_lang_s = dbm.open(os.getcwd() + '/dbms/week_line_bo_lang_s.dbm', 'c')
         db = dbm.open(os.getcwd() + '/dbms/week_line.dbm', 'c')
         ds = ds_ts.Datasource()
         df = ds.get_code_list()
@@ -36,7 +38,13 @@ if __name__ == '__main__':
 
             pmas.cal_pmas(week_lines)
             db[row.ts_code] = pickle.dumps(week_lines)
+
+            bo_lang_s = bolangs.cal_bo_lang_s(week_lines)
+            print(row.ts_code, bo_lang_s)
+            db_bo_lang_s[row.ts_code] = pickle.dumps(bo_lang_s)
+
         db.close()
+        db_bo_lang_s.close()
     except Exception as err:
         print(err)
     finally:

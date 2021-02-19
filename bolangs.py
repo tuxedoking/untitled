@@ -63,7 +63,7 @@ def cal_bo_lang_s(lines):
 
 if __name__ == '__main__':
     try:
-        db_bo_lang_s = dbm.open(os.getcwd() + '/dbms/bo_lang_s.dbm', 'c')
+        db_bo_lang_s = dbm.open(os.getcwd() + '/dbms/day_line_bo_lang_s.dbm', 'c')
         db = dbm.open(os.getcwd() + '/dbms/day_line.dbm')
         for key in db.keys():
             data = db[key]
