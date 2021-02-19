@@ -4,6 +4,8 @@ import pickle
 
 
 def cal_bo_lang_s(lines):
+    if len(lines) <= 1:
+        return None
     qu_shi = 0
     bo_lang_s = []
     nz_count = 0
