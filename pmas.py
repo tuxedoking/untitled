@@ -24,7 +24,7 @@ def cal_pmas(lines):
         if len(pmas) >= 250:
             lines[date]['pma250'] = sum(pmas[-250:])/250
 
-
+'''
 def cal_pma_bolang(lines, str_='250'):
     str = 'pma' + str_
     fromdate = 0
@@ -81,7 +81,7 @@ def cal_pma_bolang(lines, str_='250'):
                 lastdate = date
     return ret
 
-
+'''
 '''
 if __name__ == '__main__':
     try:
@@ -98,6 +98,7 @@ if __name__ == '__main__':
         print(err)
     finally:
         pass
+'''
 '''
 if __name__ == '__main__':
     try:
@@ -118,6 +119,6 @@ if __name__ == '__main__':
         print(err, s[2].tb_lineno)
     finally:
         pass
-
+'''
 
 
