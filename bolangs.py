@@ -82,3 +82,69 @@ if __name__ == '__main__':
         print(err)
     finally:
         pass
+
+'''
+if __name__ == '__main__':
+    try:
+        db_bo_lang_s = dbm.open(os.getcwd() + '/dbms/day_line_bo_lang_s.dbm', 'c')
+        db = dbm.open(os.getcwd() + '/dbms/day_line.dbm')
+        for key in db.keys():
+            data = db[key]
+            lines2 = pickle.loads(data)
+            code = bytes.decode(key)
+            # if len(lines2) < 30:
+            #     continue
+            bo_lang_s2 = cal_bo_lang_s(lines2)
+            print(code, bo_lang_s2)
+            db_bo_lang_s[code] = pickle.dumps(bo_lang_s2)
+        db.close()
+        db_bo_lang_s.close()
+    except Exception as err:
+        print(err)
+    finally:
+        pass
+'''
+
+'''
+if __name__ == '__main__':
+    try:
+        db_bo_lang_s = dbm.open(os.getcwd() + '/dbms/week_line_bo_lang_s.dbm', 'c')
+        db = dbm.open(os.getcwd() + '/dbms/week_line.dbm')
+        for key in db.keys():
+            data = db[key]
+            lines2 = pickle.loads(data)
+            code = bytes.decode(key)
+            # if len(lines2) < 30:
+            #     continue
+            bo_lang_s2 = cal_bo_lang_s(lines2)
+            print(code, bo_lang_s2)
+            db_bo_lang_s[code] = pickle.dumps(bo_lang_s2)
+        db.close()
+        db_bo_lang_s.close()
+    except Exception as err:
+        print(err)
+    finally:
+        pass
+'''
+
+'''
+if __name__ == '__main__':
+    try:
+        db_bo_lang_s = dbm.open(os.getcwd() + '/dbms/month_line_bo_lang_s.dbm', 'c')
+        db = dbm.open(os.getcwd() + '/dbms/month_line.dbm')
+        for key in db.keys():
+            data = db[key]
+            lines2 = pickle.loads(data)
+            code = bytes.decode(key)
+            # if len(lines2) < 30:
+            #     continue
+            bo_lang_s2 = cal_bo_lang_s(lines2)
+            print(code, bo_lang_s2)
+            db_bo_lang_s[code] = pickle.dumps(bo_lang_s2)
+        db.close()
+        db_bo_lang_s.close()
+    except Exception as err:
+        print(err)
+    finally:
+        pass
+'''

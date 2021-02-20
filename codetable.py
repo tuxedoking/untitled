@@ -70,7 +70,7 @@ def write_codetable2db():
 
 if __name__ == '__main__':
     write_codetable2dbm()
-    # write_codetable2db()
+    write_codetable2db()
     # write_codetable_kzz()
 
     codetable = read_codetable(os.getcwd() + '/dbms/codetable.dbm')
