@@ -70,13 +70,13 @@ def write_codetable2db():
 
 if __name__ == '__main__':
     write_codetable2dbm()
-    write_codetable2db()
-    write_codetable_kzz()
+    # write_codetable2db()
+    # write_codetable_kzz()
 
     codetable = read_codetable(os.getcwd() + '/dbms/codetable.dbm')
     for key, value in codetable.items():
         print(key, value)
 
-    codetable_kzz = read_codetable_kzz()
-    for key, value in codetable_kzz.items():
-        print(key, value)
+    # codetable_kzz = read_codetable_kzz()
+    # for key, value in codetable_kzz.items():
+    #    print(key, value)
