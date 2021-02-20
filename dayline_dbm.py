@@ -24,7 +24,7 @@ if __name__ == '__main__':
                 day_lines = pickle.loads(data)
 
             # df2 = ds.get_day_line(row.ts_code)
-            #df2 = ds.get_day_line(row.ts_code, start_date='20210201')
+            # df2 = ds.get_day_line(row.ts_code, start_date='20210201')
             df2 = ds.get_day_line(row.ts_code, start_date='19800101')
             if df2 is None:
                 continue
