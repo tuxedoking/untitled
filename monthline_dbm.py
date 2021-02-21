@@ -5,13 +5,14 @@ import dbm
 import pickle
 import os
 import sys
+import time
 
 
 if __name__ == '__main__':
     try:
-        start_date = None
+        # start_date = None
         # start_date = '20210201'
-        # start_date = '19800101'
+        start_date = '19800101'
         if len(sys.argv) > 1 and sys.argv[1] == 'schedule_task':
             start_date = '19800101'
 
@@ -30,6 +31,8 @@ if __name__ == '__main__':
 
             #df2 = ds.get_monthline(row.ts_code)
             df2 = ds.get_month_line(row.ts_code, start_date=start_date)
+            time.sleep(0.5)
+
             if df2 is None:
                 continue
             for row2 in df2.itertuples():
