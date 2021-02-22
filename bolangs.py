@@ -2,7 +2,7 @@ import dbm
 import os
 import pickle
 
-
+'''
 def cal_bo_lang_s(lines):
     if len(lines) <= 1:
         return None
@@ -61,9 +61,10 @@ def cal_bo_lang_s(lines):
         bo_lang_s.append(bo_lang)
 
     return bo_lang_s
+'''
 
 
-def cal_bo_lang_s2(lines):
+def cal_bo_lang_s(lines):
     if len(lines) <= 1:
         return None
     qu_shi = 0
@@ -84,7 +85,7 @@ def cal_bo_lang_s2(lines):
                 nz_count += 1
                 if nz_count >= 5:
                     bo_lang = {'from': dates[qu_shi_from_index], 'to': dates[qu_shi_to_index],
-                               'qu_shi': '上' if qu_shi == 1 else '下'}  # 前闭后开,如：[20200301,20200401)
+                               'qu_shi': '上' if qu_shi == 1 else '下'}
                     bo_lang_s.append(bo_lang)
                     qu_shi_from_index = qu_shi_to_index
                     qu_shi_to_index = qu_shi_to_index
@@ -104,7 +105,7 @@ def cal_bo_lang_s2(lines):
                 nz_count += 1
                 if nz_count >= 5:
                     bo_lang = {'from': dates[qu_shi_from_index], 'to': dates[qu_shi_to_index],
-                               'qu_shi': '上' if qu_shi == 1 else '下'}  # 前闭后开，如：[20200301,20200401)
+                               'qu_shi': '上' if qu_shi == 1 else '下'}
                     bo_lang_s.append(bo_lang)
                     qu_shi_from_index = qu_shi_to_index
                     qu_shi_to_index = qu_shi_to_index
@@ -118,4 +119,14 @@ def cal_bo_lang_s2(lines):
                 nz_count = 0
         i += 1
 
+    bo_lang = {'from': dates[qu_shi_from_index], 'to': dates[qu_shi_to_index],
+               'qu_shi': '上' if qu_shi == 1 else '下'}
+    bo_lang_s.append(bo_lang)
+
+    if qu_shi_to_index < len(dates) - 1:
+        bo_lang = {'from': dates[qu_shi_to_index], 'to': dates[-1],
+                   'qu_shi': '下' if qu_shi == 1 else '上'}
+        bo_lang_s.append(bo_lang)
+
     return bo_lang_s
+
