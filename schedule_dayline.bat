@@ -1,4 +1,4 @@
-call D:\Users\zhouli\anaconda3\Scripts\activate.bat base
+call activate base
 E:
 cd E:\PycharmProjects
 python codetable.py
