@@ -1,17 +1,16 @@
 import dbm
-import os
 import pickle
-import csv
 import codetable
+import os
 from util import get_start_date_month_line
 from util import __end_date
 from util import get_zhang_fu
+import csv
 
 
 def select():
     try:
         start_date = get_start_date_month_line()
-
         code_table = codetable.read_codetable(os.getcwd() + '/../dbms/codetable.dbm')
         with open(os.getcwd() + '/../select_result/月线连阳.csv', 'w', newline='') as csv_file:
             csv_writer = csv.writer(csv_file, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
@@ -32,8 +31,8 @@ def select():
                         line = lines[date]['raw']
                         close = line[3]
                         pre_close = line[4]
-                        open = line[0]
-                        if close > pre_close and close > open:
+                        open2 = line[0]
+                        if close > pre_close and close > open2:
                             flag_count += 1
                             if flag_count == 1:
                                 to_date = date
