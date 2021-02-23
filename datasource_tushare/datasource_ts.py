@@ -16,6 +16,9 @@ class Datasource:
     def get_code_list_kzz(self):
         return self.pro.cb_basic(fields="ts_code,bond_short_name,stk_code,stk_short_name,list_date,delist_date")
 
+    def get_hk_hold(self, trade_date):
+        return self.pro.hk_hold(trade_date=trade_date)
+
     @classmethod
     def get_day_line(cls, code='000001.SZ', start_date=None, end_date=None):
         today = date.today()
@@ -99,7 +102,16 @@ if __name__ == '__main__':
     for row in df.itertuples():
         print(row)
 '''
-
+'''
 if __name__ == '__main__':
     ds = Datasource()
     print(ds.get_last_trade_days())
+'''
+
+if __name__ == '__main__':
+    ds = Datasource()
+    df = ds.get_hk_hold('20210222')
+    for row in df.itertuples():
+        # print(row.ts_code)
+        if row.ts_code == '002531.SZ' or row.ts_code == '300418.SZ':
+            print(row)
