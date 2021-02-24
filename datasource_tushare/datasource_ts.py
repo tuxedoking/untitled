@@ -69,6 +69,23 @@ class Datasource:
         return d
             #print('SZ', row2.cal_date, row2.is_open)
 
+    def get_trade_days(self):
+        today = date.today()
+        end_date = '%d%02d%02d' % (today.year, today.month, today.day)
+        df = self.pro.trade_cal(exchange='SSE', start_date='19800101', end_date=end_date)
+        s = set()
+        for row in df.itertuples():
+            if row.is_open == 1:
+                s.add(row.cal_date)
+        return s
+
+
+if __name__ == '__main__':
+    ds = Datasource()
+    day_set = ds.get_trade_days()
+    l = sorted(day_set, reverse=True)[0:100]
+    for strr in l:
+        print(strr)
 
 '''
 if __name__ == '__main__':
@@ -107,7 +124,7 @@ if __name__ == '__main__':
     ds = Datasource()
     print(ds.get_last_trade_days())
 '''
-
+'''
 if __name__ == '__main__':
     ds = Datasource()
     df = ds.get_hk_hold('20210222')
@@ -115,3 +132,4 @@ if __name__ == '__main__':
         # print(row.ts_code)
         if row.ts_code == '002531.SZ' or row.ts_code == '300418.SZ':
             print(row)
+'''
