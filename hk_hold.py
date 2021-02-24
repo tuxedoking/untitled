@@ -8,6 +8,7 @@ import time
 def get_hk_hold(trade_date):
     try:
         db = dbm.open(os.getcwd() + '/dbms/hk_hold.dbm', 'c')
+        ds = ds_ts.Datasource()
         df = ds.get_hk_hold(trade_date=trade_date)
         for row in df.itertuples():
             if row.exchange != 'SH' and row.exchange != 'SZ':
@@ -34,10 +35,11 @@ def get_hk_hold(trade_date):
 
 
 if __name__ == '__main__':
-    ds = ds_ts.Datasource()
-    day_set = ds.get_trade_days()
-    day_list = sorted(day_set, reverse=True)[0:100]
-    for trade_date2 in day_list:
-        get_hk_hold(trade_date2)
-        time.sleep(30)
+    get_hk_hold(20210223)
+    # ds = ds_ts.Datasource()
+    # day_set = ds.get_trade_days()
+    # day_list = sorted(day_set, reverse=True)[0:100]
+    # for trade_date2 in day_list:
+    #     get_hk_hold(trade_date2)
+    #     time.sleep(30)
 
