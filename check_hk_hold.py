@@ -15,9 +15,13 @@ if __name__ == '__main__':
                 data = db[key]
                 hold = pickle.loads(data)
                 code = bytes.decode(key)
+                # print(code)
+                # print(json.dumps(hold))
+                if code not in code_table:
+                    continue
                 f.write(code + ' ' + code_table[code] + '\n')
                 for date in sorted(hold):
-                    f.write('\t' + date + json.dumps(hold[date]) + '\n')
+                     f.write('\t' + date + json.dumps(hold[date]) + '\n')
         db.close()
     except Exception as err:
         print(err)
