@@ -21,7 +21,8 @@ if __name__ == '__main__':
                     continue
                 f.write(code + ' ' + code_table[code] + '\n')
                 for date in sorted(hold):
-                     f.write('\t' + date + json.dumps(hold[date]) + '\n')
+                    if hold[date]['ratio'] > 2:
+                        f.write('\t' + date + json.dumps(hold[date]) + '\n')
         db.close()
     except Exception as err:
         print(err)
