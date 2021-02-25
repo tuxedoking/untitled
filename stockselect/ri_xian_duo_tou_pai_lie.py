@@ -23,11 +23,17 @@ def select():
                 data = db[key]
                 lines = pickle.loads(data)
                 code = bytes.decode(key)
+                # if code == '003001.SZ':
+                #    sss = 999
                 count = 0
                 for date in sorted(lines, reverse=True):
+                    #if date == '20201120':
+                    #    sss = 999
                     if int(date) > __end_date:
                         continue
                     elif start_date <= int(date) <= __end_date:
+                        if 'pma5' not in lines[date] or 'pma10' not in lines[date] or 'pma20' not in lines[date] or 'pma30' not in lines[date]:
+                            break
                         pma5 = lines[date]['pma5']
                         pma10 = lines[date]['pma10']
                         pma20 = lines[date]['pma20']
@@ -52,6 +58,7 @@ def select():
                         break
             db.close()
     except Exception as err:
+        print(code)
         print(err)
     finally:
         pass
