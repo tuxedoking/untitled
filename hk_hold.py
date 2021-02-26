@@ -35,7 +35,7 @@ def get_hk_hold(trade_date):
 
 
 if __name__ == '__main__':
-    get_hk_hold(20210224)
+    get_hk_hold(20210225)
 
     # ds = ds_ts.Datasource()
     # day_set = ds.get_trade_days()
