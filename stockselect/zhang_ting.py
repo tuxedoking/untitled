@@ -38,7 +38,11 @@ def select():
                             count += 1
                         else:
                             if count > 0:
-                                result_row = [to_date, code[0:6], code_table[code], count]
+                                if code not in code_table:
+                                    name = ''
+                                else:
+                                    name = code_table[code]
+                                result_row = [to_date, code[0:6], name, count]
                                 csv_writer.writerow(result_row)
                                 print(result_row)
                             count = 0

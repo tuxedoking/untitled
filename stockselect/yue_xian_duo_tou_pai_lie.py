@@ -28,6 +28,8 @@ def select():
                     if int(date) > __end_date:
                         continue
                     elif start_date <= int(date) <= __end_date:
+                        if 'pma5' not in lines[date] or 'pma10' not in lines[date] or 'pma20' not in lines[date] or 'pma30' not in lines[date]:
+                            break
                         pma5 = lines[date]['pma5']
                         pma10 = lines[date]['pma10']
                         pma20 = lines[date]['pma20']
