@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
             # df2 = ds.get_week_line(row.ts_code)
             df2 = ds.get_week_line(row.ts_code, start_date=start_date)
-            time.sleep(0.1)
+            time.sleep(0.5)
             if df2 is None:
                 continue
             for row2 in df2.itertuples():
