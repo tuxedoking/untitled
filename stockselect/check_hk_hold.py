@@ -16,7 +16,7 @@ if __name__ == '__main__':
                 hold = pickle.loads(data)
                 code = bytes.decode(key)
                 # print(code)
-                # print(json.dumps(hold))
+                print(json.dumps(hold))
                 if code not in code_table:
                     continue
                 f.write(code + ' ' + code_table[code] + '\n')
