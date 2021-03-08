@@ -5,13 +5,13 @@ import os
 from util import get_start_date_month_line
 from util import __end_date
 from util import get_zhang_fu
+from util import get_stock_name
 import csv
 
 
 def select():
     try:
         start_date = get_start_date_month_line()
-        code_table = codetable.read_codetable(os.getcwd() + '/../dbms/codetable.dbm')
         with open(os.getcwd() + '/../select_result/月线连阳.csv', 'w', newline='') as csv_file:
             csv_writer = csv.writer(csv_file, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
             csv_writer.writerow(['日期', '代码', '名称', '涨幅', '数量'])
@@ -40,7 +40,7 @@ def select():
                             if flag_count >= 3:
                                 zhang_fu = get_zhang_fu(lines[date]['raw'][3], lines[to_date]['raw'][3])
                                 if zhang_fu >= 10:
-                                    result_row = [to_date, code[0:6], code_table[code], zhang_fu, flag_count]
+                                    result_row = [to_date, code[0:6], get_stock_name(code), zhang_fu, flag_count]
                                     csv_writer.writerow(result_row)
                                     print(result_row)
                                 flag_count = 0

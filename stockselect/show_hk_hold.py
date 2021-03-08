@@ -3,12 +3,12 @@ import codetable
 import dbm
 import os
 import json
+from util import get_stock_name
 
 
 if __name__ == '__main__':
     try:
         # codes = {'002531.SZ', '300418.SZ'}
-        code_table = codetable.read_codetable(os.getcwd() + '/../dbms/codetable.dbm')
         db = dbm.open(os.getcwd() + '/../dbms/hk_hold.dbm')
         with open(os.getcwd() + '/../select_result/hk_hold.txt', 'w') as f:
             for key in db.keys():
@@ -17,9 +17,7 @@ if __name__ == '__main__':
                 code = bytes.decode(key)
                 # print(code)
                 print(json.dumps(hold))
-                if code not in code_table:
-                    continue
-                f.write(code + ' ' + code_table[code] + '\n')
+                f.write(code + ' ' + get_stock_name(code) + '\n')
                 for date in sorted(hold):
                     if hold[date]['ratio'] > 2:
                         f.write('\t' + date + json.dumps(hold[date]) + '\n')

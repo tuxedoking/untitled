@@ -6,13 +6,13 @@ import os
 from util import is_zt
 from util import get_start_date
 from util import __end_date
+from util import get_stock_name
 import csv
 
 
 def select():
     try:
         start_date = get_start_date()
-        code_table = codetable.read_codetable(os.getcwd() + '/../dbms/codetable.dbm')
         with open(os.getcwd() + '/../select_result/涨停.csv', 'w', newline='') as csv_file:
             csv_writer = csv.writer(csv_file, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
             csv_writer.writerow(['日期', '代码', '名称', '数量'])
@@ -38,11 +38,7 @@ def select():
                             count += 1
                         else:
                             if count > 0:
-                                if code not in code_table:
-                                    name = ''
-                                else:
-                                    name = code_table[code]
-                                result_row = [to_date, code[0:6], name, count]
+                                result_row = [to_date, code[0:6], get_stock_name(code), count]
                                 csv_writer.writerow(result_row)
                                 print(result_row)
                             count = 0

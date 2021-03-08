@@ -9,7 +9,8 @@ if __name__ == '__main__':
             data = db[key]
             bo_lang_s = pickle.loads(data)
             code = bytes.decode(key)
-            print(code, bo_lang_s)
+            if code == '002588.SZ':
+                print(code, bo_lang_s)
         db.close()
     except Exception as err:
         print(err)

@@ -5,13 +5,13 @@ import os
 import util
 from util import get_start_date_week_line
 from util import __end_date
+from util import get_stock_name
 import csv
 
 
 def select():
     try:
         start_date = get_start_date_week_line()
-        code_table = codetable.read_codetable(os.getcwd() + '/../dbms/codetable.dbm')
         with open(os.getcwd() + '/../select_result/周线多头排列.csv', 'w', newline='') as csv_file:
             csv_writer = csv.writer(csv_file, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
             csv_writer.writerow(['日期', '代码', '名称', '数量', '幅度'])
@@ -46,7 +46,7 @@ def select():
                                 count += 1
                         else:
                             if count >= 3:  # 连续走3天以上的多头排列
-                                result_row = [to_date, code[0:6], code_table[code], count, zhang_fu]
+                                result_row = [to_date, code[0:6], get_stock_name(code), count, zhang_fu]
                                 csv_writer.writerow(result_row)
                                 print(result_row)
                             count = 0
