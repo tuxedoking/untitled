@@ -5,6 +5,7 @@ import os
 from util import get_start_date
 from util import __end_date
 from util import get_stock_name
+from util import get_zhang_fu
 import csv
 
 
@@ -26,7 +27,7 @@ def select():
                 #    sss = 999
                 count = 0
                 for date in sorted(lines, reverse=True):
-                    #if date == '20201120':
+                    # if date == '20201120':
                     #    sss = 999
                     if int(date) > __end_date:
                         continue
@@ -39,7 +40,7 @@ def select():
                         pma30 = lines[date]['pma30']
                         if pma5 > pma10 > pma20 > pma30:
                             if count == 0:
-                                zhang_fu = util.get_zhang_fu(pma30, pma5)
+                                zhang_fu = get_zhang_fu(pma30, pma5)
                                 if zhang_fu > 5:    # ma5和ma30涨幅>5
                                     to_date = date
                                     count += 1

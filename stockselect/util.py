@@ -71,7 +71,6 @@ def get_stock_name(code):
             return code_table[code]
     except Exception as err:
         print(err)
-    finally:
         return ''
 
 

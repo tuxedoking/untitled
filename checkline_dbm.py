@@ -12,7 +12,7 @@ if __name__ == '__main__':
             lines = pickle.loads(data)
             code = bytes.decode(key)
             for date in sorted(lines, reverse=True):
-                print(code, date)
+                print(code, date, lines[date])
                 break
         db.close()
     except Exception as err:
