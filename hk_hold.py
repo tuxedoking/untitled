@@ -3,6 +3,7 @@ from datasource_tushare import datasource_ts as ds_ts
 import dbm
 import os
 import time
+import pandas as pd
 
 
 def get_hk_hold(trade_date):
@@ -10,6 +11,7 @@ def get_hk_hold(trade_date):
         db = dbm.open(os.getcwd() + '/dbms/hk_hold.dbm', 'c')
         ds = ds_ts.Datasource()
         df = ds.get_hk_hold(trade_date=trade_date)
+
         for row in df.itertuples():
             if row.exchange != 'SH' and row.exchange != 'SZ':
                 continue
@@ -35,7 +37,7 @@ def get_hk_hold(trade_date):
 
 
 if __name__ == '__main__':
-    get_hk_hold(20210315)
+    get_hk_hold(20210322)
     # ds = ds_ts.Datasource()
     # day_set = ds.get_trade_days()
     # day_list = sorted(day_set, reverse=True)[0:100]
