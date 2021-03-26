@@ -1,32 +1,41 @@
 import datasource_tushare.datasource_ts as dsts
 import dbm
 import os
-import pandas as pd
 from datasource_tushare import mysql_helper as mh
+import pickle
+import datetime
 
 
-def read_codetable(filename):
+def read_codetable(file_name):
     try:
-        db = dbm.open(filename)
-        jsonstr = db['codetable']
-        df = pd.read_json(jsonstr)
+        db = dbm.open(file_name)
+        last_time = pickle.loads(db['time'])
+        if (datetime.datetime.now() - last_time).seconds > 3:
+            write_codetable2dbm(file_name)
+        df_bytes = db['codetable']
+        df = pickle.loads(df_bytes)
         d = {}
         for index in df.index:
             d[df.loc[index, 'ts_code']] = df.loc[index, 'name']
         return d
     except Exception as err:
+        print(err)
         return None
+    finally:
+        db.close()
 
 
-def write_codetable2dbm():
+def write_codetable2dbm(file_name):
     try:
-        db = dbm.open(os.getcwd() + '/dbms/codetable.dbm', 'c')
+        db = dbm.open(file_name, 'c')
         ds = dsts.Datasource()
         df = ds.get_code_list()
-        df_str = df.to_json()
-        db['codetable'] = df_str
+        db['codetable'] = pickle.dumps(df)
+        db['time'] = pickle.dumps(datetime.datetime.now())
     except Exception as err:
         print(err)
+    finally:
+        db.close()
 
 
 def write_codetable2db():
@@ -44,14 +53,8 @@ def write_codetable2db():
 
 
 if __name__ == '__main__':
-    write_codetable2dbm()
-    write_codetable2db()
-    # write_codetable_kzz()
-
-    codetable = read_codetable(os.getcwd() + '/dbms/codetable.dbm')
+    file_name = os.getcwd() + '/dbms/codetable.dbm'
+    codetable = read_codetable(file_name)
     for key, value in codetable.items():
-        print(key, value)
+       print(key, value)
 
-    # codetable_kzz = read_codetable_kzz()
-    # for key, value in codetable_kzz.items():
-    #    print(key, value)

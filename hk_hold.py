@@ -11,37 +11,40 @@ def get_hk_hold(trade_date):
         db = dbm.open(os.getcwd() + '/dbms/hk_hold.dbm', 'c')
         ds = ds_ts.Datasource()
         df = ds.get_hk_hold(trade_date=trade_date)
-
-        for row in df.itertuples():
-            if row.exchange != 'SH' and row.exchange != 'SZ':
+        print(df)
+        for index in df.index:
+            if df.loc[index, 'exchange'] != 'SH' and df.loc[index, 'exchange'] != 'SZ':
                 continue
-            print(row)
+            code = df.loc[index, 'ts_code']
+            trade_date = df.loc[index, 'trade_date']
+            vol = int(df.loc[index, 'vol'])
+            ratio = df.loc[index, 'ratio']
+
             data = None
             hold = {}
             try:
-                data = db[row.ts_code]
+                data = db[code]
             except KeyError:
                 pass
             if data is not None:
                 hold = pickle.loads(data)
 
-            hold[row.trade_date] = {'vol': row.vol, 'ratio': row.ratio}
+            hold[trade_date] = {'vol': vol, 'ratio': ratio}
             print(hold)
-            db[row.ts_code] = pickle.dumps(hold)
+            db[code] = pickle.dumps(hold)
 
-        db.close()
     except Exception as err:
         print(err)
     finally:
-        pass
+        db.close()
 
 
 if __name__ == '__main__':
-    get_hk_hold(20210324)
-    # ds = ds_ts.Datasource()
-    # day_set = ds.get_trade_days()
-    # day_list = sorted(day_set, reverse=True)[0:100]
-    # for trade_date2 in day_list:
-    #     get_hk_hold(trade_date2)
-    #     time.sleep(30)
+    #get_hk_hold(20210325)
+    ds = ds_ts.Datasource()
+    day_set = ds.get_trade_days()
+    day_list = sorted(day_set, reverse=True)[0:100]
+    for trade_date2 in day_list:
+        get_hk_hold(trade_date2)
+        time.sleep(30)
 
