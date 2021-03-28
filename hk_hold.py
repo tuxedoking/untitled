@@ -40,11 +40,11 @@ def get_hk_hold(trade_date):
 
 
 if __name__ == '__main__':
-    #get_hk_hold(20210325)
-    ds = ds_ts.Datasource()
-    day_set = ds.get_trade_days()
-    day_list = sorted(day_set, reverse=True)[0:100]
-    for trade_date2 in day_list:
-        get_hk_hold(trade_date2)
-        time.sleep(30)
+    get_hk_hold(20210326)
+    # ds = ds_ts.Datasource()
+    # day_set = ds.get_trade_days()
+    # day_list = sorted(day_set, reverse=True)[0:100]
+    # for trade_date2 in day_list:
+    #     get_hk_hold(trade_date2)
+    #     time.sleep(30)
 

@@ -10,7 +10,7 @@ def read_codetable(file_name):
     try:
         db = dbm.open(file_name)
         last_time = pickle.loads(db['time'])
-        if (datetime.datetime.now() - last_time).seconds > 3:
+        if (datetime.datetime.now() - last_time).seconds > 3600:
             write_codetable2dbm(file_name)
         df_bytes = db['codetable']
         df = pickle.loads(df_bytes)
@@ -30,6 +30,7 @@ def write_codetable2dbm(file_name):
         db = dbm.open(file_name, 'c')
         ds = dsts.Datasource()
         df = ds.get_code_list()
+        print(df)
         db['codetable'] = pickle.dumps(df)
         db['time'] = pickle.dumps(datetime.datetime.now())
     except Exception as err:
