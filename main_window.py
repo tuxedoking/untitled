@@ -1,11 +1,14 @@
 from tkinter import *
 from tkinter import ttk
+from stockselect.util import get_work_area
+
+wapos = get_work_area()
+if wapos is None:
+    exit(0)
 
 root = Tk()
-root.geometry('450x800+0+0')
+root.geometry(f'450x800+{wapos[0]}+{wapos[1]}')
 root.title('selector')
-
-
 
 content = ttk.Frame(root)
 frame = ttk.Frame(content)
