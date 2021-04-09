@@ -1,6 +1,11 @@
 from tkinter import *
 from tkinter import ttk
+
+import win32con
+import win32gui
+
 from stockselect.util import get_work_area
+from stockselect.util import find_ths_wnd
 import datetime
 
 
@@ -45,22 +50,54 @@ root.title('selector')
 content = ttk.Frame(root)
 frame = ttk.Frame(content)
 
+
+def adjust_window():
+    wa_pos2 = get_work_area()
+    width = int((wa_pos2[2] - wa_pos2[0]) * m_pos / 24)
+    root.geometry(f'{width}x{wa_pos2[3] - wa_pos2[1]}+{wa_pos2[0]}+{wa_pos2[1]}')
+    hwnd = find_ths_wnd()
+    if not hwnd:
+        return
+    win32gui.ShowWindow(hwnd, win32con.SW_SHOWNORMAL)
+    win32gui.SetWindowPos(hwnd, None, wa_pos2[0] + root.winfo_width(), wa_pos2[1],
+                          wa_pos2[2] - wa_pos2[0] - root.winfo_width(),
+                          wa_pos2[3] - wa_pos2[1], win32con.SWP_SHOWWINDOW)
+
+
+def on_adjust_position_button():
+    global m_pos
+    m_pos = 7
+    adjust_window()
+
+
+def on_adjust_left():
+    global m_pos
+    if m_pos > 7:
+        m_pos -= 1
+    adjust_window()
+
+
+def on_adjust_right():
+    global m_pos
+    if m_pos < 15:
+        m_pos += 1
+    adjust_window()
+
+
 reload_button = ttk.Button(frame, text="重新载入")
-left_button = ttk.Button(frame, text="<", width=1)
-adjust_position_button = ttk.Button(frame, text="调整位置")
-right_button = ttk.Button(frame, text=">", width=1)
+left_button = ttk.Button(frame, text="<", width=1, command=on_adjust_left)
+adjust_position_button = ttk.Button(frame, text="调整位置", command=on_adjust_position_button)
+right_button = ttk.Button(frame, text=">", width=1, command=on_adjust_right)
 from_label = ttk.Label(frame, text="开始")
 from_date = StringVar()
-from_date.set((datetime.datetime.today()-datetime.timedelta(100)).strftime('%Y/%m/%d'))
+from_date.set((datetime.datetime.today() - datetime.timedelta(100)).strftime('%Y/%m/%d'))
 from_entry = ttk.Entry(frame, width=10, textvariable=from_date)
 to_label = ttk.Label(frame, text="结束")
 to_date = StringVar()
 to_date.set(datetime.datetime.today().strftime('%Y/%m/%d'))
 to_entry = ttk.Entry(frame, width=10, textvariable=to_date)
 
-
 frame2 = ttk.Frame(content)
-
 
 content.grid(column=0, row=0, sticky=(N, S, E, W))
 frame.grid(column=0, row=0, columnspan=8, rowspan=1, sticky=(N, S, E, W))
@@ -85,13 +122,10 @@ content.rowconfigure(1, weight=1)
 # frame.rowconfigure(1, weight=1)
 
 
-
-
-
 notebook = ttk.Notebook(frame2)
 
-f1 = ttk.Frame(notebook)   # first page, which would get widgets gridded into it
-f2 = ttk.Frame(notebook)   # second page
+f1 = ttk.Frame(notebook)  # first page, which would get widgets gridded into it
+f2 = ttk.Frame(notebook)  # second page
 
 notebook.add(f1, text='创新高')
 notebook.add(f2, text='周线多头排列')
@@ -122,9 +156,8 @@ def on_tab_changed(event):
     # print(f2)
     # print(notebook.children[tab_id.split(".")[len(tab_id.split(".")) - 1]])
 
+
 notebook.bind("<<NotebookTabChanged>>", on_tab_changed)
-
-
 
 # frame = ttk.Frame(content, borderwidth=5, relief="ridge", width=200, height=100)
 # namelbl = ttk.Label(content, text="Name")

@@ -5,6 +5,11 @@ from datetime import date
 from datetime import timedelta
 import codetable
 from ctypes import *
+import win32api
+import win32con
+import win32gui
+import win32process
+import time
 
 
 def is_zt(pre_close, close):
@@ -72,15 +77,32 @@ def get_work_area():
 
 
 def find_ths_wnd():
-    class HWND(Structure):
-        _fields_ = [("unused", c_int)]
-    user32 = windll.user32
-    handle = HWND()
-    handle.unused = 0
-    handle_pr = pointer(handle)
-    handle_pr = user32.FindWindowExW(0, 0, 0, 0)
-    print(handle_pr)
-    #print(handle_pr.contents)
+    hwnd_ths = 0
+    while True:
+        hwnd_ths = win32gui.FindWindowEx(None, hwnd_ths, None, None)
+        if hwnd_ths == 0:
+            return False
+        if win32gui.IsWindowVisible(hwnd_ths):
+            win_text = win32gui.GetWindowText(hwnd_ths)
+            if win_text[0:3] == '同花顺':
+                return hwnd_ths
+    return False
+
+
+def press_code_on_ths(hwnd_ths, code='002531'):
+    win32gui.PostMessage(hwnd_ths, win32con.WM_KEYDOWN, ord('6') & 0xFF, 0)
+    win32gui.PostMessage(hwnd_ths, win32con.WM_KEYUP, ord('6') & 0xFF, 0)
+    time.sleep(0.3)
+    win32gui.SetForegroundWindow(hwnd_ths)
+    self_thread_id = win32api.GetCurrentThreadId()
+    fore_thread_id = win32process.GetWindowThreadProcessId(hwnd_ths)
+    win32process.AttachThreadInput(fore_thread_id[0], self_thread_id, True)
+    obj_wnd = win32gui.GetFocus()
+    win32gui.SendMessage(obj_wnd, win32con.WM_SETTEXT, 0, code)
+    win32gui.PostMessage(obj_wnd, win32con.WM_KEYDOWN, win32con.VK_RETURN, 0)
+    win32gui.PostMessage(obj_wnd, win32con.WM_KEYUP, win32con.VK_RETURN, 0)
+    win32process.AttachThreadInput(fore_thread_id[0], self_thread_id, False)
+    return True
 
 
 code_table = None
@@ -105,7 +127,12 @@ def get_stock_name(code):
 __end_date = 20500101
 
 if __name__ == '__main__':
-    find_ths_wnd()
+    hwnd = find_ths_wnd()
+    if hwnd == False:
+        exit(0)
+    else:
+        press_code_on_ths(hwnd)
+
     # a = get_work_area()
     # print(type(a))
     # print(get_stock_name('002531.SZ'))
