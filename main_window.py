@@ -52,6 +52,7 @@ frame = ttk.Frame(content)
 
 
 def adjust_window():
+    global m_pos
     wa_pos2 = get_work_area()
     width = int((wa_pos2[2] - wa_pos2[0]) * m_pos / 24)
     root.geometry(f'{width}x{wa_pos2[3] - wa_pos2[1]}+{wa_pos2[0]}+{wa_pos2[1]}')
