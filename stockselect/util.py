@@ -71,6 +71,18 @@ def get_work_area():
     return pr.contents.left, pr.contents.top, pr.contents.right, pr.contents.bottom
 
 
+def find_ths_wnd():
+    class HWND(Structure):
+        _fields_ = [("unused", c_int)]
+    user32 = windll.user32
+    handle = HWND()
+    handle.unused = 0
+    handle_pr = pointer(handle)
+    handle_pr = user32.FindWindowExW(0, 0, 0, 0)
+    print(handle_pr)
+    #print(handle_pr.contents)
+
+
 code_table = None
 
 
@@ -93,8 +105,9 @@ def get_stock_name(code):
 __end_date = 20500101
 
 if __name__ == '__main__':
-    a = get_work_area()
-    print(type(a))
+    find_ths_wnd()
+    # a = get_work_area()
+    # print(type(a))
     # print(get_stock_name('002531.SZ'))
     # print(get_start_date_month_line())
     # print(type(get_start_date()))

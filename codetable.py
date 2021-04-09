@@ -12,6 +12,8 @@ def read_codetable(file_name):
         last_time = pickle.loads(db['time'])
         if (datetime.datetime.now() - last_time).seconds > 3600:
             write_codetable2dbm(file_name)
+            db.close()
+            db = dbm.open(file_name)
         df_bytes = db['codetable']
         df = pickle.loads(df_bytes)
         d = {}

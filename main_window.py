@@ -3,6 +3,37 @@ from tkinter import ttk
 from stockselect.util import get_work_area
 import datetime
 
+
+def add_treeview_notebook(frame):
+    columns = ("name", "tel", "email", "company")
+    headers = ("姓名", "电话", "邮箱", "公司")
+    widthes = (80, 80, 150, 150)
+    tv = ttk.Treeview(frame, show='headings', columns=columns)
+
+    def test():
+        print(tv.identify_column(root.winfo_pointerx() - root.winfo_rootx()))
+        print(tv.get_children())
+        for item in tv.get_children():
+            print(tv.item(item))
+
+    for (column, header, width) in zip(columns, headers, widthes):
+        tv.column(column, width=width, anchor="w")
+        tv.heading(column, text=header, anchor="w", command=test)
+
+    contacts = [
+        ('张三', '1870591xxxx', 'zhang@qq.com', '腾讯'),
+        ('李斯', '1589928xxxx', 'lisi@google.com', '谷歌'),
+        ('王武', '1340752xxxx', 'wangwu@baidu.com', '微软'),
+        ('麻溜儿', '1361601xxxx', 'maliur@alibaba.com', '阿里'),
+        ('郑和', '1899986xxxx', 'zhenghe@163.com', '网易'),
+    ]
+    for i, person in enumerate(contacts):
+        tv.insert('', i, values=person)
+
+    tv.grid(column=0, row=0, sticky=(N, S, E, W))
+    return tv
+
+
 wa_pos = get_work_area()
 if wa_pos is None:
     exit(0)
@@ -53,49 +84,46 @@ content.rowconfigure(1, weight=1)
 # frame.rowconfigure(0, weight=1)
 # frame.rowconfigure(1, weight=1)
 
+
+
+
+
 notebook = ttk.Notebook(frame2)
+
 f1 = ttk.Frame(notebook)   # first page, which would get widgets gridded into it
 f2 = ttk.Frame(notebook)   # second page
-
-columns = ("name", "tel", "email", "company")
-headers = ("姓名", "电话", "邮箱", "公司")
-widthes = (80, 80, 150, 150)
-tv = ttk.Treeview(f1, show='headings', columns=columns)
-
-
-def test():
-    print(tv.identify_column(root.winfo_pointerx()-root.winfo_rootx()))
-    print(tv.get_children())
-    for item in tv.get_children():
-        print(tv.item(item))
-
-
-for (column, header, width) in zip(columns, headers, widthes):
-    tv.column(column, width=width, anchor="w")
-    tv.heading(column, text=header, anchor="w", command=test)
-
-contacts =[
-    ('张三', '1870591xxxx', 'zhang@qq.com', '腾讯'),
-    ('李斯', '1589928xxxx', 'lisi@google.com', '谷歌'),
-    ('王武', '1340752xxxx', 'wangwu@baidu.com', '微软'),
-    ('麻溜儿', '1361601xxxx', 'maliur@alibaba.com', '阿里'),
-    ('郑和', '1899986xxxx', 'zhenghe@163.com', '网易'),
-]
-for i, person in enumerate(contacts):
-    tv.insert('', i, values=person)
-
 
 notebook.add(f1, text='创新高')
 notebook.add(f2, text='周线多头排列')
 notebook.grid(column=0, row=0, sticky=(N, S, E, W))
 
-tv.grid(column=0, row=0, sticky=(N, S, E, W))
+tv = add_treeview_notebook(f1)
 
 f1.columnconfigure(0, weight=1)
 f1.rowconfigure(0, weight=1)
 
+f2.columnconfigure(0, weight=1)
+f2.rowconfigure(0, weight=1)
+
 frame2.columnconfigure(0, weight=1)
 frame2.rowconfigure(0, weight=1)
+
+
+def on_tab_changed(event):
+    print(event.widget)
+    global tv
+    tab_id = event.widget.select()
+    frame = event.widget.children[tab_id.split(".")[len(tab_id.split(".")) - 1]]
+    tv.destroy()
+    tv = add_treeview_notebook(frame)
+    # tab_id = notebook.select()
+    # tab_index = notebook.index(tab_id)
+    # print(f1)
+    # print(f2)
+    # print(notebook.children[tab_id.split(".")[len(tab_id.split(".")) - 1]])
+
+notebook.bind("<<NotebookTabChanged>>", on_tab_changed)
+
 
 
 # frame = ttk.Frame(content, borderwidth=5, relief="ridge", width=200, height=100)
