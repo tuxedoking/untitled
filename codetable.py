@@ -47,7 +47,8 @@ def write_codetable2db():
         ds = dsts.Datasource()
         df = ds.get_code_list()
         for index in df.index:
-            sql = "replace into code (obj,name,updatetime) values ('%s','%s',now())" % (df.loc[index, 'ts_code'], df.loc[index, 'name'])
+            sql = "replace into code (obj,name,updatetime) values ('%s','%s',now())" % (
+            df.loc[index, 'ts_code'], df.loc[index, 'name'])
             print(sql)
             mysql.runsql(sql)
     except Exception as err:
@@ -59,5 +60,4 @@ if __name__ == '__main__':
     file_name = os.getcwd() + '/dbms/codetable.dbm'
     codetable = read_codetable(file_name)
     for key, value in codetable.items():
-       print(key, value)
-
+        print(key, value)
