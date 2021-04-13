@@ -50,12 +50,17 @@ def put_lines_from_net_to_dbm(file_name, get_lines_fun_name):
         ds = Datasource()
         df = ds.get_code_list()
 
+        last_t = 0
         for index in df.index:
             ts_code = df.loc[index, 'ts_code']
             print(ts_code)
+            if time.time() - last_t < 0.5:
+                time.sleep(time.time() - last_t)
+                print('sleep ',time.time() - last_t)
+                last_t = time.time()
             df_lines = get_lines_fun_name(ts_code, start_date=start_date)
-            df_lines = df_lines.dropna(subset=['close'])
             t = time.time()
+            df_lines = df_lines.dropna(subset=['close'])
             df_lines2 = cal_pma_s_in_data_frame(df_lines, periods)
             print('cal pma s', time.time() - t)
             print(df_lines2)
