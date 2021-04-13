@@ -1,72 +1,10 @@
-from datasource_tushare import datasource_ts as ds_ts
-import pmas
-from math import isnan
-import dbm
-import pickle
+from datasource_tushare.datasource_ts import Datasource
 import os
-import sys
-import time
+import pandas as pd
+from stockselect import util
 
 
 if __name__ == '__main__':
-    try:
-        # start_date = None
-        # start_date = '20210201'
-        start_date = '19800101'
-        if len(sys.argv) > 1 and sys.argv[1] == 'schedule_task':
-            start_date = '19800101'
-
-        db = dbm.open(os.getcwd() + '/dbms/week_line.dbm', 'c')
-        ds = ds_ts.Datasource()
-        df = ds.get_code_list()
-        # print(df)
-        # print(df.index)
-        # print(df.columns)
-        for index in df.index:
-            ts_code = df.loc[index, 'ts_code']
-            print(ts_code)
-            df_week_line = ds.get_week_line(ts_code, start_date=start_date)
-            print(df_week_line.shape)
-            df_week_line = df_week_line.dropna(subset=['close'])
-            print(df_week_line.shape)
-            time.sleep(0.5)
-            print(df_week_line)
-            # del db[ts_code]
-            db[ts_code] = pickle.dumps(df_week_line)
-        db.close()
-
-
-
-            #print(index)
-        # for row in df.itertuples():
-        #     data = None
-        #     week_lines = {}
-        #     try:
-        #         data = db[row.ts_code]
-        #     except KeyError:
-        #         pass
-        #     if data is not None:
-        #         week_lines = pickle.loads(data)
-        #
-        #     # df2 = ds.get_week_line(row.ts_code)
-        #     df2 = ds.get_week_line(row.ts_code, start_date=start_date)
-        #     time.sleep(0.5)
-        #     if df2 is None:
-        #         continue
-        #     for row2 in df2.itertuples():
-        #         print(row2)
-        #         if isnan(row2.close):
-        #             continue
-        #         if row2.trade_date not in week_lines:
-        #             week_lines[row2.trade_date] = {}
-        #             week_lines[row2.trade_date]['raw'] = [row2.open, row2.high, row2.low, row2.close, row2.pre_close,
-        #                                                   row2.vol, row2.amount]
-        #
-        #     pmas.cal_pmas(week_lines)
-        #     db[row.ts_code] = pickle.dumps(week_lines)
-        #
-        # db.close()
-    except Exception as err:
-        print(err)
-    finally:
-        pass
+    pd.set_option('display.max_columns', 1000)
+    file_name = os.getcwd() + '/dbms/week_line.dbm'
+    util.put_lines_from_net_to_dbm(file_name, Datasource.get_week_line)

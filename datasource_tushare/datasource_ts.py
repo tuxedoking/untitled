@@ -83,10 +83,17 @@ class Datasource:
 if __name__ == '__main__':
     ds = Datasource()
     day_set = ds.get_trade_days()
+    day_list = sorted(day_set)
+    print(day_list[-50])
+
+'''
+if __name__ == '__main__':
+    ds = Datasource()
+    day_set = ds.get_trade_days()
     l = sorted(day_set, reverse=True)[0:100]
     for strr in l:
         print(strr)
-
+'''
 '''
 if __name__ == '__main__':
     ds = Datasource()

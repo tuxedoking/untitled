@@ -11,8 +11,8 @@ import win32gui
 import win32process
 import time
 import pandas as pd
-from datasource_tushare import datasource_ts as ds_ts
 import numpy as np
+from datasource_tushare.datasource_ts import Datasource
 
 
 def is_zt(pre_close, close):
@@ -21,7 +21,7 @@ def is_zt(pre_close, close):
 
 
 def get_zhang_fu(pre_close, close):
-    return round(100*(close - pre_close)/pre_close, 2)
+    return round(100 * (close - pre_close) / pre_close, 2)
 
 
 def cal_pma_s_in_data_frame(df_day_line, periods):
@@ -39,22 +39,24 @@ def cal_pma_s_in_data_frame(df_day_line, periods):
     return pd.concat([df_day_line, pd.DataFrame(l4df)], axis=1)
 
 
-def get_lines_to_dbm(file_name, fun_name):
+periods = (5, 10, 20, 30, 60, 120, 250)
+
+
+def put_lines_from_net_to_dbm(file_name, get_lines_fun_name):
     try:
-        pd.set_option('display.max_columns', 1000)
         start_date = '19800101'
 
         db = dbm.open(file_name, 'c')
-        ds = ds_ts.Datasource()
+        ds = Datasource()
         df = ds.get_code_list()
 
         for index in df.index:
             ts_code = df.loc[index, 'ts_code']
             print(ts_code)
-            df_lines = fun_name(ts_code, start_date=start_date)
+            df_lines = get_lines_fun_name(ts_code, start_date=start_date)
             df_lines = df_lines.dropna(subset=['close'])
             t = time.time()
-            df_lines2 = cal_pma_s_in_data_frame(df_lines, (5, 10, 20, 30, 60, 120, 250))
+            df_lines2 = cal_pma_s_in_data_frame(df_lines, periods)
             print('cal pma s', time.time() - t)
             print(df_lines2)
             db[ts_code] = pickle.dumps(df_lines2)
@@ -62,6 +64,33 @@ def get_lines_to_dbm(file_name, fun_name):
         print(err)
     finally:
         db.close()
+
+
+def merge_lines(df_net, df_dbm):
+    for index in df_net:
+        if df_net.loc[index, 'trade_date'] == df_dbm.loc[0, 'trade_date']:
+            if df_net.loc[index, 'open'] == df_dbm.loc[0, 'open'] \
+                    and df_net.loc[index, 'high'] == df_dbm.loc[0, 'high'] \
+                    and df_net.loc[index, 'low'] == df_dbm.loc[0, 'low'] \
+                    and df_net.loc[index, 'close'] == df_dbm.loc[0, 'close']:
+                break
+            else:
+                return False
+                break
+    df_up = df_net.loc[0:index-1]
+    df = pd.concat([df_up, df_dbm], axis=0).reset_index(drop=True)
+    close_array = np.array(df['close'])
+    for i, index in enumerate(df.index):
+        if isnan(df.loc[index, 'pma5']):
+            for period in periods:
+                if i + period > len(df_day_line):
+                    df.loc[index, f'pma{period}'] = np.nan
+                else:
+                    a = close_array[i:i + period]
+                    df.loc[index, f'pma{period}'] = np.sum(a) / len(a)
+        else:
+            break
+    return df
 
 
 def get_last_day_line_close_price():
@@ -92,14 +121,14 @@ def get_start_date():
 
 def get_start_date_month_line():
     today = date.today()
-    td = timedelta(days=100*3)
+    td = timedelta(days=100 * 3)
     start_date = (today - td).strftime('%Y%m%d')
     return int(start_date)
 
 
 def get_start_date_week_line():
     today = date.today()
-    td = timedelta(days=100*2)
+    td = timedelta(days=100 * 2)
     start_date = (today - td).strftime('%Y%m%d')
     return int(start_date)
 
