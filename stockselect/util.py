@@ -10,6 +10,9 @@ import win32con
 import win32gui
 import win32process
 import time
+import pandas as pd
+from datasource_tushare import datasource_ts as ds_ts
+import numpy as np
 
 
 def is_zt(pre_close, close):
@@ -19,6 +22,46 @@ def is_zt(pre_close, close):
 
 def get_zhang_fu(pre_close, close):
     return round(100*(close - pre_close)/pre_close, 2)
+
+
+def cal_pma_s_in_data_frame(df_day_line, periods):
+    l4df = []
+    close_array = np.array(df_day_line['close'])
+    for i, close in enumerate(close_array):
+        d = {}
+        for period in periods:
+            if i + period > len(df_day_line):
+                d[f'pma{period}'] = np.nan
+            else:
+                a = close_array[i:i + period]
+                d[f'pma{period}'] = np.sum(a) / len(a)
+        l4df.append(d)
+    return pd.concat([df_day_line, pd.DataFrame(l4df)], axis=1)
+
+
+def get_lines_to_dbm(file_name, fun_name):
+    try:
+        pd.set_option('display.max_columns', 1000)
+        start_date = '19800101'
+
+        db = dbm.open(file_name, 'c')
+        ds = ds_ts.Datasource()
+        df = ds.get_code_list()
+
+        for index in df.index:
+            ts_code = df.loc[index, 'ts_code']
+            print(ts_code)
+            df_lines = fun_name(ts_code, start_date=start_date)
+            df_lines = df_lines.dropna(subset=['close'])
+            t = time.time()
+            df_lines2 = cal_pma_s_in_data_frame(df_lines, (5, 10, 20, 30, 60, 120, 250))
+            print('cal pma s', time.time() - t)
+            print(df_lines2)
+            db[ts_code] = pickle.dumps(df_lines2)
+    except Exception as err:
+        print(err)
+    finally:
+        db.close()
 
 
 def get_last_day_line_close_price():
