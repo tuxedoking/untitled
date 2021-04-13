@@ -56,8 +56,8 @@ def put_lines_from_net_to_dbm(file_name, get_lines_fun_name):
             print(ts_code)
             if time.time() - last_t < 0.5:
                 time.sleep(time.time() - last_t)
-                print('sleep ',time.time() - last_t)
-                last_t = time.time()
+                print('sleep ', time.time() - last_t)
+            last_t = time.time()
             df_lines = get_lines_fun_name(ts_code, start_date=start_date)
             t = time.time()
             df_lines = df_lines.dropna(subset=['close'])
