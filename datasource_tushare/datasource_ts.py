@@ -9,6 +9,7 @@ class Datasource:
     def __init__(self):
         ts.set_token(self.__TOKEN)
         self.pro = ts.pro_api()
+        self.date_dataframe = {}
 
     def get_code_list(self):
         return self.pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
@@ -18,6 +19,9 @@ class Datasource:
 
     def get_hk_hold(self, trade_date):
         return self.pro.hk_hold(trade_date=trade_date)
+
+    def get_adj_factor(self, ts_code, trade_date):
+        return self.pro.adj_factor(ts_code=ts_code, trade_date=trade_date)
 
     @classmethod
     def get_day_line(cls, code='000001.SZ', start_date=None, end_date=None):
@@ -79,12 +83,41 @@ class Datasource:
                 s.add(row.cal_date)
         return s
 
+    # def is_stock_xr(self, ts_code, state_date):
+    #     day_set = self.get_trade_days()
+    #     day_list = sorted([day for day in day_set if day > state_date])
+    #     temp_d = {}
+    #     for trade_date in day_list:
+    #         df = self.get_adj_factor(ts_code, trade_date)
+    #         if temp_d.get(ts_code) is None:
+    #             temp_d[ts_code] = df.loc[0, 'adj_factor']
+    #         else:
+    #             if temp_d[ts_code] != df.loc[0, 'adj_factor']:
+    #                 return trade_date
+    #     return None
+
 
 if __name__ == '__main__':
     ds = Datasource()
+    # print(ds.is_stock_xr('002130.SZ', '20210301'))
+'''
+if __name__ == '__main__':
+    ds = Datasource()
     day_set = ds.get_trade_days()
-    day_list = sorted(day_set)
-    print(day_list[-50])
+    day_list = sorted(day_set, reverse=True)[0:20]
+    d = {}
+    for trade_date in day_list:
+        df = ds.get_adj_factor(trade_date)
+        for index in df.index:
+            code = df.loc[index, 'ts_code']
+            factor = df.loc[index, 'adj_factor']
+            if d.get(code) is None:
+                d[code] = factor
+            else:
+                if d[code] != factor:
+                    print(code, trade_date)
+                    d[code] = factor
+'''
 
 '''
 if __name__ == '__main__':
@@ -140,3 +173,22 @@ if __name__ == '__main__':
         if row.ts_code == '002531.SZ' or row.ts_code == '300418.SZ':
             print(row)
 '''
+
+# def get_codes_xr_in_last20_days(self):
+#     day_set = self.get_trade_days()
+#     day_list = sorted(day_set, reverse=True)[0:20]
+#     tmp_d = {}
+#     ret_d = {}
+#     for trade_date in day_list:
+#         df = ds.get_adj_factor(trade_date)
+#         for index in df.index:
+#             code = df.loc[index, 'ts_code']
+#             factor = df.loc[index, 'adj_factor']
+#             if tmp_d.get(code) is None:
+#                 tmp_d[code] = factor
+#             else:
+#                 if tmp_d[code] != factor:
+#                     #l.append((code, trade_date))
+#                     ret_d[code] = trade_date
+#                     tmp_d[code] = factor
+#     return ret_d

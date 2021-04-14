@@ -24,7 +24,11 @@ def get_zhang_fu(pre_close, close):
     return round(100 * (close - pre_close) / pre_close, 2)
 
 
-def cal_pma_s_in_data_frame(df_day_line, periods):
+periods = (5, 10, 20, 30, 60, 120, 250)
+
+
+def cal_pma_s_in_data_frame(df_day_line):
+    t = time.time()
     l4df = []
     close_array = np.array(df_day_line['close'])
     for i, close in enumerate(close_array):
@@ -36,15 +40,13 @@ def cal_pma_s_in_data_frame(df_day_line, periods):
                 a = close_array[i:i + period]
                 d[f'pma{period}'] = np.sum(a) / len(a)
         l4df.append(d)
+    print('cal pma s', time.time() - t)
     return pd.concat([df_day_line, pd.DataFrame(l4df)], axis=1)
 
 
-periods = (5, 10, 20, 30, 60, 120, 250)
-
-
-def put_lines_from_net_to_dbm(file_name, get_lines_fun_name):
+def put_lines_from_net_to_dbm(file_name, get_lines_from_net_fun_name, interval=0):
     try:
-        start_date = '19800101'
+
 
         db = dbm.open(file_name, 'c')
         ds = Datasource()
@@ -54,17 +56,43 @@ def put_lines_from_net_to_dbm(file_name, get_lines_fun_name):
         for index in df.index:
             ts_code = df.loc[index, 'ts_code']
             print(ts_code)
-            if time.time() - last_t < 0.5:
-                time.sleep(time.time() - last_t)
-                print('sleep ', time.time() - last_t)
+            interval_last = time.time() - last_t
+            if interval_last < interval:
+                time.sleep(interval_last)
+                print('sleep ', interval_last)
             last_t = time.time()
-            df_lines = get_lines_fun_name(ts_code, start_date=start_date)
-            t = time.time()
-            df_lines = df_lines.dropna(subset=['close'])
-            df_lines2 = cal_pma_s_in_data_frame(df_lines, periods)
-            print('cal pma s', time.time() - t)
-            print(df_lines2)
-            db[ts_code] = pickle.dumps(df_lines2)
+
+            data = db.get(ts_code)
+            if data is None:
+                print('dbm里没有')
+                df_from_net = get_lines_from_net_fun_name(ts_code, start_date='19800101')
+                df_from_net = df_from_net.dropna(subset=['close'])
+                df_result = cal_pma_s_in_data_frame(df_from_net)
+                print(df_result)
+                db[ts_code] = pickle.dumps(df_result)
+            else:
+                df_dbm = pickle.loads(data)
+
+                df_from_net = get_lines_from_net_fun_name(ts_code, start_date=df_dbm.loc[0, 'trade_date'])
+                df_from_net = df_from_net.dropna(subset=['close'])
+
+                db_merge = merge_lines(df_from_net, df_dbm)
+                # db_merge = merge_lines(df_from_net, df_dbm.drop([0, 1]))
+                if db_merge is None:
+                    print('除权啦')
+                    df_result = cal_pma_s_in_data_frame(df_from_net)
+                    print(df_result)
+                    db[ts_code] = pickle.dumps(df_result)
+                    # print(df_result)
+                    # db[ts_code] = pickle.dumps(df_result)
+                elif db_merge is df_dbm:
+                    print('dbm里是全的')
+                    pass
+                else:
+                    db[ts_code] = pickle.dumps(db_merge)
+                    # print(db_merge)
+                    # pass
+                    # db[ts_code] = pickle.dumps(db_merge)
     except Exception as err:
         print(err)
     finally:
@@ -72,30 +100,37 @@ def put_lines_from_net_to_dbm(file_name, get_lines_fun_name):
 
 
 def merge_lines(df_net, df_dbm):
-    for index in df_net:
-        if df_net.loc[index, 'trade_date'] == df_dbm.loc[0, 'trade_date']:
-            if df_net.loc[index, 'open'] == df_dbm.loc[0, 'open'] \
-                    and df_net.loc[index, 'high'] == df_dbm.loc[0, 'high'] \
-                    and df_net.loc[index, 'low'] == df_dbm.loc[0, 'low'] \
-                    and df_net.loc[index, 'close'] == df_dbm.loc[0, 'close']:
+    index = 0
+    for index in df_net.index:
+        if df_net.loc[index, 'trade_date'] == df_dbm.loc[df_dbm.index[0], 'trade_date']:
+            if df_net.loc[index, 'open'] == df_dbm.loc[df_dbm.index[0], 'open'] \
+                    and df_net.loc[index, 'high'] == df_dbm.loc[df_dbm.index[0], 'high'] \
+                    and df_net.loc[index, 'low'] == df_dbm.loc[df_dbm.index[0], 'low'] \
+                    and df_net.loc[index, 'close'] == df_dbm.loc[df_dbm.index[0], 'close']:
                 break
             else:
-                return False
-                break
+                return None
+    if index == 0:
+        return df_dbm
+
+    print(f'新增{index}条记录')
     df_up = df_net.loc[0:index-1]
-    df = pd.concat([df_up, df_dbm], axis=0).reset_index(drop=True)
-    close_array = np.array(df['close'])
-    for i, index in enumerate(df.index):
-        if isnan(df.loc[index, 'pma5']):
-            for period in periods:
-                if i + period > len(df_day_line):
-                    df.loc[index, f'pma{period}'] = np.nan
-                else:
-                    a = close_array[i:i + period]
-                    df.loc[index, f'pma{period}'] = np.sum(a) / len(a)
-        else:
-            break
-    return df
+    print(df_up)
+    close_array = np.append(np.array(df_up['close']), np.array(df_dbm['close']))
+
+    l4df = []
+    for i, index in enumerate(df_up.index):
+        d = {}
+        for period in periods:
+            if i + period > len(close_array):
+                d[f'pma{period}'] = np.nan
+            else:
+                a = close_array[i:i + period]
+                d[f'pma{period}'] = np.sum(a) / len(a)
+        l4df.append(d)
+
+    df_up2 = pd.concat([df_up, pd.DataFrame(l4df)], axis=1)
+    return pd.concat([df_up2, df_dbm], axis=0).reset_index(drop=True)
 
 
 def get_last_day_line_close_price():

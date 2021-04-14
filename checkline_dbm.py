@@ -12,6 +12,7 @@ if __name__ == '__main__':
         db = dbm.open(os.getcwd() + '/dbms/day_line.dbm')
         # db = dbm.open(os.getcwd() + '/dbms/week_line.dbm')
         # db = dbm.open(os.getcwd() + '/dbms/month_line.dbm')
+        # print(db.get(';a;a'))
         for key in db.keys():
             data = db[key]
             df = pickle.loads(data)
