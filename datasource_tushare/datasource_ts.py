@@ -9,7 +9,6 @@ class Datasource:
     def __init__(self):
         ts.set_token(self.__TOKEN)
         self.pro = ts.pro_api()
-        self.date_dataframe = {}
 
     def get_code_list(self):
         return self.pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
@@ -71,7 +70,7 @@ class Datasource:
                 d['last_date'] = row.cal_date
             # print('SH', row.cal_date, row.is_open)
         return d
-            #print('SZ', row2.cal_date, row2.is_open)
+            # print('SZ', row2.cal_date, row2.is_open)
 
     def get_trade_days(self):
         today = date.today()
@@ -83,22 +82,14 @@ class Datasource:
                 s.add(row.cal_date)
         return s
 
-    # def is_stock_xr(self, ts_code, state_date):
-    #     day_set = self.get_trade_days()
-    #     day_list = sorted([day for day in day_set if day > state_date])
-    #     temp_d = {}
-    #     for trade_date in day_list:
-    #         df = self.get_adj_factor(ts_code, trade_date)
-    #         if temp_d.get(ts_code) is None:
-    #             temp_d[ts_code] = df.loc[0, 'adj_factor']
-    #         else:
-    #             if temp_d[ts_code] != df.loc[0, 'adj_factor']:
-    #                 return trade_date
-    #     return None
+    def get_last_n_trade_days(self, minus_n=100):
+        trade_day_list = sorted(self.get_trade_days(), reverse=True)
+        return trade_day_list[minus_n]
 
 
 if __name__ == '__main__':
     ds = Datasource()
+    print(ds.get_last_n_trade_days())
     # print(ds.is_stock_xr('002130.SZ', '20210301'))
 '''
 if __name__ == '__main__':
@@ -192,3 +183,17 @@ if __name__ == '__main__':
 #                     ret_d[code] = trade_date
 #                     tmp_d[code] = factor
 #     return ret_d
+
+
+# def is_stock_xr(self, ts_code, state_date):
+#     day_set = self.get_trade_days()
+#     day_list = sorted([day for day in day_set if day > state_date])
+#     temp_d = {}
+#     for trade_date in day_list:
+#         df = self.get_adj_factor(ts_code, trade_date)
+#         if temp_d.get(ts_code) is None:
+#             temp_d[ts_code] = df.loc[0, 'adj_factor']
+#         else:
+#             if temp_d[ts_code] != df.loc[0, 'adj_factor']:
+#                 return trade_date
+#     return None

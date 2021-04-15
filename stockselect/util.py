@@ -46,15 +46,16 @@ def cal_pma_s_in_data_frame(df_day_line):
 
 def put_lines_from_net_to_dbm(file_name, get_lines_from_net_fun_name, interval=0):
     try:
-
-
         db = dbm.open(file_name, 'c')
         ds = Datasource()
         df = ds.get_code_list()
 
+        start_date_before_100 = ds.get_last_n_trade_days(20)
+
         last_t = 0
         for index in df.index:
             ts_code = df.loc[index, 'ts_code']
+            # ts_code = '600634.SH'
             print(ts_code)
             interval_last = time.time() - last_t
             if interval_last < interval:
@@ -66,6 +67,8 @@ def put_lines_from_net_to_dbm(file_name, get_lines_from_net_fun_name, interval=0
             if data is None:
                 print('dbm里没有')
                 df_from_net = get_lines_from_net_fun_name(ts_code, start_date='19800101')
+                if df_from_net is None or len(df_from_net) == 0:
+                    continue
                 df_from_net = df_from_net.dropna(subset=['close'])
                 df_result = cal_pma_s_in_data_frame(df_from_net)
                 print(df_result)
@@ -73,26 +76,42 @@ def put_lines_from_net_to_dbm(file_name, get_lines_from_net_fun_name, interval=0
             else:
                 df_dbm = pickle.loads(data)
 
-                df_from_net = get_lines_from_net_fun_name(ts_code, start_date=df_dbm.loc[0, 'trade_date'])
+                #df_from_net = get_lines_from_net_fun_name(ts_code, start_date=df_dbm.loc[0, 'trade_date'])
+                df_from_net = get_lines_from_net_fun_name(ts_code, start_date=start_date_before_100)
+                if df_from_net is None or len(df_from_net) == 0:
+                    continue
                 df_from_net = df_from_net.dropna(subset=['close'])
 
-                db_merge = merge_lines(df_from_net, df_dbm)
-                # db_merge = merge_lines(df_from_net, df_dbm.drop([0, 1]))
-                if db_merge is None:
-                    print('除权啦')
+                trade_date1 = df_from_net.loc[df_from_net.index[df_from_net.shape[0]-1], 'trade_date']
+                trade_date2 = df_dbm.loc[0, 'trade_date']
+                print('last date in net dataframe = ', trade_date1)
+                print('first date in dbm dataframe = ', trade_date2)
+                if trade_date1 > trade_date2:
+                    df_from_net = get_lines_from_net_fun_name(ts_code, start_date='19800101')
+                    if df_from_net is None or len(df_from_net) == 0:
+                        continue
+                    df_from_net = df_from_net.dropna(subset=['close'])
                     df_result = cal_pma_s_in_data_frame(df_from_net)
                     print(df_result)
                     db[ts_code] = pickle.dumps(df_result)
-                    # print(df_result)
-                    # db[ts_code] = pickle.dumps(df_result)
-                elif db_merge is df_dbm:
-                    print('dbm里是全的')
-                    pass
                 else:
-                    db[ts_code] = pickle.dumps(db_merge)
-                    # print(db_merge)
-                    # pass
-                    # db[ts_code] = pickle.dumps(db_merge)
+                    db_merge = merge_lines(df_from_net, df_dbm)
+                    # db_merge = merge_lines(df_from_net, df_dbm.drop([0, 1]))
+                    if db_merge is None:
+                        print('除权啦')
+                        df_from_net = get_lines_from_net_fun_name(ts_code, start_date='19800101')
+                        if df_from_net is None or len(df_from_net) == 0:
+                            continue
+                        df_from_net = df_from_net.dropna(subset=['close'])
+                        df_result = cal_pma_s_in_data_frame(df_from_net)
+                        print(df_result)
+                        db[ts_code] = pickle.dumps(df_result)
+                    elif db_merge is df_dbm:
+                        print('dbm里是全的')
+                        pass
+                    else:
+                        print(db_merge)
+                        db[ts_code] = pickle.dumps(db_merge)
     except Exception as err:
         print(err)
     finally:
@@ -115,7 +134,6 @@ def merge_lines(df_net, df_dbm):
 
     print(f'新增{index}条记录')
     df_up = df_net.loc[0:index-1]
-    print(df_up)
     close_array = np.append(np.array(df_up['close']), np.array(df_dbm['close']))
 
     l4df = []
@@ -130,6 +148,7 @@ def merge_lines(df_net, df_dbm):
         l4df.append(d)
 
     df_up2 = pd.concat([df_up, pd.DataFrame(l4df)], axis=1)
+    print(df_up2)
     return pd.concat([df_up2, df_dbm], axis=0).reset_index(drop=True)
 
 
