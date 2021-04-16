@@ -23,7 +23,7 @@ def is_zt(pre_close, close):
 def get_zhang_fu(pre_close, close):
     return round(100 * (close - pre_close) / pre_close, 2)
 
-
+'''
 __last_t = 0
 periods = (5, 10, 20, 30, 60, 120, 250)
 
@@ -71,7 +71,6 @@ def put_lines_from_net_to_dbm(file_name, get_lines_from_net_fun_name, interval=0
         last_t = 0
         for index in df.index:
             ts_code = df.loc[index, 'ts_code']
-            # ts_code = '600634.SH'
             print(ts_code)
 
             data = db.get(ts_code)
@@ -86,7 +85,7 @@ def put_lines_from_net_to_dbm(file_name, get_lines_from_net_fun_name, interval=0
                 # df_from_net = df_from_net.dropna(subset=['close'])
                 df_result = cal_pma_s_in_data_frame(df_from_net)
                 print(df_result)
-                #db[ts_code] = pickle.dumps(df_result)
+                db[ts_code] = pickle.dumps(df_result)
             else:
                 df_dbm = pickle.loads(data)
 
@@ -114,7 +113,7 @@ def put_lines_from_net_to_dbm(file_name, get_lines_from_net_fun_name, interval=0
                     # df_from_net = df_from_net.dropna(subset=['close'])
                     df_result = cal_pma_s_in_data_frame(df_from_net)
                     print(df_result)
-                    #db[ts_code] = pickle.dumps(df_result)
+                    db[ts_code] = pickle.dumps(df_result)
                 else:
                     db_merge = merge_lines(df_from_net, df_dbm)
                     # db_merge = merge_lines(df_from_net, df_dbm.drop([0, 1]))
@@ -129,13 +128,13 @@ def put_lines_from_net_to_dbm(file_name, get_lines_from_net_fun_name, interval=0
                         # df_from_net = df_from_net.dropna(subset=['close'])
                         df_result = cal_pma_s_in_data_frame(df_from_net)
                         print(df_result)
-                        #db[ts_code] = pickle.dumps(df_result)
+                        db[ts_code] = pickle.dumps(df_result)
                     elif db_merge is df_dbm:
                         print('dbm里是全的')
                         pass
                     else:
                         print(db_merge)
-                        #db[ts_code] = pickle.dumps(db_merge)
+                        db[ts_code] = pickle.dumps(db_merge)
     except Exception as err:
         print(err)
     finally:
@@ -183,6 +182,7 @@ def merge_lines(df_net, df_dbm):
     print(df_up2)
     return pd.concat([df_up2, df_dbm], axis=0)
     # return pd.concat([df_up2, df_dbm], axis=0).reset_index(drop=True)
+'''
 
 
 def get_last_day_line_close_price():

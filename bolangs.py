@@ -64,6 +64,16 @@ def cal_bo_lang_s(lines):
 '''
 
 
+# dates和values都是np.array对象
+def cal_bo_lang_s2(dates, values):
+    if len(dates) != len(values):
+        return None
+    if len(values) <= 1:
+        return None
+
+    for value in enumerate(values):
+
+
 def cal_bo_lang_s(lines):
     if len(lines) <= 1:
         return None
@@ -129,4 +139,3 @@ def cal_bo_lang_s(lines):
         bo_lang_s.append(bo_lang)
 
     return bo_lang_s
-
