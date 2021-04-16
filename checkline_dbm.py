@@ -9,9 +9,9 @@ if __name__ == '__main__':
         pd.set_option('display.max_columns', 1000)
         ds = ds_ts.Datasource()
         df_code_list = ds.get_code_list()
-        db = dbm.open(os.getcwd() + '/dbms/day_line.dbm')
-        # db = dbm.open(os.getcwd() + '/dbms/week_line.dbm')
-        # db = dbm.open(os.getcwd() + '/dbms/month_line.dbm')
+        # db = dbm.open(os.getcwd() + '/dbms/day_line.dbm')
+        db = dbm.open(os.getcwd() + '/dbms/week_line.dbm', 'c')
+        # db = dbm.open(os.getcwd() + '/dbms/month_line.dbm', 'c')
         # print(db.get(';a;a'))
         for key in db.keys():
             data = db[key]
@@ -21,7 +21,8 @@ if __name__ == '__main__':
             #     print(code, date, lines[date])
             #     break
             print(code)
-            print(df.loc[0:10])
+            print(df.iloc[0:10])
+            # db[code] = pickle.dumps(df.set_index('trade_date'))
         print('stock count = ', len(df_code_list))
     except Exception as err:
         print(err)
