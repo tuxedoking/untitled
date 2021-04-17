@@ -30,9 +30,10 @@ class lines_operator:
     def get_lines_from_net(self, ts_code, start_date, get_lines_from_net_fun_name, interval=0):
         if interval > 0:
             interval_last = time.time() - self.last_t
+            # print('interval_last', interval_last, interval)
             if interval_last < interval:
-                time.sleep(interval_last)
-                print('sleep ', interval_last)
+                time.sleep(interval - interval_last)
+                print('sleep ', interval - interval_last)
             self.last_t = time.time()
 
         df_from_net = get_lines_from_net_fun_name(ts_code, start_date=start_date)
@@ -40,13 +41,13 @@ class lines_operator:
             return None
         return df_from_net.dropna(subset=['close']).set_index('trade_date')
 
-    def put_lines_from_net_to_dbm(self, file_name, get_lines_from_net_fun_name, interval=0):
+    def put_lines_from_net_to_dbm(self, file_name, get_lines_from_net_fun_name, interval=0, before_day=20):
         try:
             db = dbm.open(file_name, 'c')
             ds = Datasource()
             df = ds.get_code_list()
 
-            start_date_before_100 = ds.get_last_n_trade_days(20)
+            start_date_before_n = ds.get_last_n_trade_days(before_day)
 
             last_t = 0
             for index in df.index:
@@ -69,7 +70,7 @@ class lines_operator:
                 else:
                     df_dbm = pickle.loads(data)
 
-                    df_from_net = self.get_lines_from_net(ts_code, start_date_before_100, get_lines_from_net_fun_name,
+                    df_from_net = self.get_lines_from_net(ts_code, start_date_before_n, get_lines_from_net_fun_name,
                                                           interval)
                     if df_from_net is None:
                         continue
@@ -85,7 +86,8 @@ class lines_operator:
                     print('last date in net dataframe = ', trade_date1)
                     print('first date in dbm dataframe = ', trade_date2)
                     if trade_date1 > trade_date2:
-                        df_from_net = self.get_lines_from_net(ts_code, '19800101', get_lines_from_net_fun_name, interval)
+                        df_from_net = self.get_lines_from_net(ts_code, '19800101', get_lines_from_net_fun_name,
+                                                              interval)
                         if df_from_net is None:
                             continue
                         # df_from_net = get_lines_from_net_fun_name(ts_code, start_date='19800101')
@@ -100,7 +102,8 @@ class lines_operator:
                         # db_merge = merge_lines(df_from_net, df_dbm.drop([0, 1]))
                         if db_merge is None:
                             print('除权啦')
-                            df_from_net = self.get_lines_from_net(ts_code, '19800101', get_lines_from_net_fun_name, interval)
+                            df_from_net = self.get_lines_from_net(ts_code, '19800101', get_lines_from_net_fun_name,
+                                                                  interval)
                             if df_from_net is None:
                                 continue
                             # df_from_net = get_lines_from_net_fun_name(ts_code, start_date='19800101')
