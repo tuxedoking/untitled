@@ -76,14 +76,18 @@ def cal_bo_lang_s2(dates, values):
 if __name__ == '__main__':
     try:
         db = dbm.open(os.getcwd() + '/dbms/day_line.dbm')
-        # db = dbm.open(os.getcwd() + '/dbms/week_line.dbm', 'c')
-        # db = dbm.open(os.getcwd() + '/dbms/month_line.dbm', 'c')
+        # db = dbm.open(os.getcwd() + '/dbms/week_line.dbm')
+        # db = dbm.open(os.getcwd() + '/dbms/month_line.dbm')
         # print(db.get(';a;a'))
         for key in db.keys():
             data = db[key]
             df = pickle.loads(data)
             code = bytes.decode(key)
             print(code)
+            dates = list(reversed(df.index))
+            values = list(reversed(df['close']))
+            print(cal_bo_lang_s2(dates, values))
+            # print(df)
 
     except Exception as err:
         print(err)

@@ -82,10 +82,11 @@ class main_window:
 
         self.notebook.bind("<<NotebookTabChanged>>", self.on_tab_changed)
 
-    def add_tree_view_notebook(self, frame):
-        columns = ("name", "tel", "email", "company")
-        headers = ("姓名", "电话", "邮箱", "公司")
-        widths = (80, 80, 150, 150)
+    def add_tree_view_notebook(self, frame, tab_index = 0):
+        if tab_index == 0:
+            columns = ('date', 'code', 'name', 'count')
+            headers = ('日期', '代码', '名称', '天数')
+            widths = (80, 60, 80, 60)
         self.tv = ttk.Treeview(frame, show='headings', columns=columns)
 
         def test():
@@ -98,15 +99,15 @@ class main_window:
             self.tv.column(column, width=width, anchor="w")
             self.tv.heading(column, text=header, anchor="w", command=test)
 
-        contacts = [
-            ('张三', '1870591xxxx', 'zhang@qq.com', '腾讯'),
-            ('李斯', '1589928xxxx', 'lisi@google.com', '谷歌'),
-            ('王武', '1340752xxxx', 'wangwu@baidu.com', '微软'),
-            ('麻溜儿', '1361601xxxx', 'maliur@alibaba.com', '阿里'),
-            ('郑和', '1899986xxxx', 'zhenghe@163.com', '网易'),
-        ]
-        for i, person in enumerate(contacts):
-            self.tv.insert('', i, values=person)
+        # contacts = [
+        #     ('张三', '1870591xxxx', 'zhang@qq.com', '腾讯'),
+        #     ('李斯', '1589928xxxx', 'lisi@google.com', '谷歌'),
+        #     ('王武', '1340752xxxx', 'wangwu@baidu.com', '微软'),
+        #     ('麻溜儿', '1361601xxxx', 'maliur@alibaba.com', '阿里'),
+        #     ('郑和', '1899986xxxx', 'zhenghe@163.com', '网易'),
+        # ]
+        # for i, person in enumerate(contacts):
+        #     self.tv.insert('', i, values=person)
 
         self.tv.grid(column=0, row=0, sticky=(N, S, E, W))
 

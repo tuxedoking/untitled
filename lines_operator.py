@@ -11,21 +11,21 @@ class lines_operator:
         self.last_t = 0
         self.periods = (5, 10, 20, 30, 60, 120, 250)
 
-    def cal_pma_s_in_data_frame(self, df_day_line):
+    def cal_pma_s_in_data_frame(self, df_lines):
         t = time.time()
         l4df = []
-        close_array = np.array(df_day_line['close'])
+        close_array = np.array(df_lines['close'])
         for i, close in enumerate(close_array):
             d = {}
             for period in self.periods:
-                if i + period > len(df_day_line):
+                if i + period > len(df_lines):
                     d[f'pma{period}'] = np.nan
                 else:
                     a = close_array[i:i + period]
                     d[f'pma{period}'] = np.sum(a) / len(a)
             l4df.append(d)
         print('cal pma s', time.time() - t)
-        return pd.concat([df_day_line, pd.DataFrame(l4df)], axis=1)
+        return pd.concat([df_lines, pd.DataFrame(l4df, index=df_lines.index)], axis=1)
 
     def get_lines_from_net(self, ts_code, start_date, get_lines_from_net_fun_name, interval=0):
         if interval > 0:
