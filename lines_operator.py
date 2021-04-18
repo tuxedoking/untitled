@@ -67,6 +67,7 @@ class lines_operator:
                     df_result = self.cal_pma_s_in_data_frame(df_from_net)
                     print(df_result)
                     db[ts_code] = pickle.dumps(df_result)
+                    print(pickle.loads(db[ts_code]))
                 else:
                     df_dbm = pickle.loads(data)
 

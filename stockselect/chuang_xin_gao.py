@@ -6,13 +6,17 @@ from util import get_stock_name
 MAX_DAY_COUNT = 50
 
 
-def select(tv, start_date, end_date):
+def select(tv, start_date):
     try:
         db = dbm.open(os.getcwd() + '/../dbms/day_line.dbm')
         for key in db.keys():
             data = db[key]
             df_lines = pickle.loads(data)
             code = bytes.decode(key)
+            close_series = df_lines[df_lines.index >= start_date]['close']
+            for i, date in enumerate(close_series.index):
+                close = close_series[date]
+                for j in range(i, len(close_series)):
             # count = 0
             # for date in sorted(lines, reverse=True):
             #     if int(date) > end_date:
