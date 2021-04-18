@@ -3,10 +3,8 @@ import pickle
 import os
 from util import get_stock_name
 
-MAX_DAY_COUNT = 50
 
-
-def select(tv, start_date):
+def select(tv, start_date, max_day_count=50):
     try:
         db = dbm.open(os.getcwd() + '/../dbms/day_line.dbm')
         for key in db.keys():
@@ -16,7 +14,13 @@ def select(tv, start_date):
             close_series = df_lines[df_lines.index >= start_date]['close']
             for i, date in enumerate(close_series.index):
                 close = close_series[date]
-                for j in range(i, len(close_series)):
+                for count, j in enumerate(range(i + 1, len(close_series)), 1):
+                    if close_series[j] > close:
+                        if count > max_day_count:
+                            item = (date, code, get_stock_name(code), count)
+                            tv.insert('', values=item)
+                            break
+
             # count = 0
             # for date in sorted(lines, reverse=True):
             #     if int(date) > end_date:
