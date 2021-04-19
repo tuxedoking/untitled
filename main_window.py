@@ -5,10 +5,17 @@ from stockselect.util import find_ths_wnd
 import datetime
 import win32con
 import win32gui
+from stockselect import chuang_xin_gao as cxg
+import os
+import dbm
 
 
 class main_window:
     def __init__(self):
+        self.db_day_lines = dbm.open(os.getcwd() + '/dbms/day_line.dbm')
+        self.db_week_lines = dbm.open(os.getcwd() + '/dbms/week_line.dbm')
+        self.db_month_lines = dbm.open(os.getcwd() + '/dbms/month_line.dbm')
+
         self.tv = None
         self.m_pos = 0
 
@@ -30,11 +37,11 @@ class main_window:
         self.from_label = ttk.Label(self.frame, text="开始")
         self.from_date = StringVar()
         self.from_entry = ttk.Entry(self.frame, width=10, textvariable=self.from_date)
-        self.from_date.set((datetime.datetime.today() - datetime.timedelta(100)).strftime('%Y/%m/%d'))
+        self.from_date.set((datetime.datetime.today() - datetime.timedelta(100)).strftime('%Y%m%d'))
         self.to_label = ttk.Label(self.frame, text="结束")
         self.to_date = StringVar()
         self.to_entry = ttk.Entry(self.frame, width=10, textvariable=self.to_date)
-        self.to_date.set(datetime.datetime.today().strftime('%Y/%m/%d'))
+        self.to_date.set(datetime.datetime.today().strftime('%Y%m%d'))
 
         self.frame2 = ttk.Frame(self.content)
 
@@ -82,7 +89,7 @@ class main_window:
 
         self.notebook.bind("<<NotebookTabChanged>>", self.on_tab_changed)
 
-    def add_tree_view_notebook(self, frame, tab_index = 0):
+    def add_tree_view_notebook(self, frame, tab_index=0):
         if tab_index == 0:
             columns = ('date', 'code', 'name', 'count')
             headers = ('日期', '代码', '名称', '天数')
@@ -144,7 +151,25 @@ class main_window:
         print(index)
         frame = event.widget.children[tab_id.split(".")[len(tab_id.split(".")) - 1]]
         self.tv.destroy()
-        self.add_tree_view_notebook(frame)
+        # self.add_tree_view_notebook(frame)
+        if index == 0:
+            columns = ('date', 'code', 'name', 'count')
+            headers = ('日期', '代码', '名称', '天数')
+            widths = (80, 60, 80, 60)
+            self.tv = ttk.Treeview(frame, show='headings', columns=columns)
+
+            def test():
+                print(self.tv.identify_column(self.root.winfo_pointerx() - self.root.winfo_rootx()))
+                print(self.tv.get_children())
+                for item in self.tv.get_children():
+                    print(self.tv.item(item))
+
+            for (column, header, width) in zip(columns, headers, widths):
+                self.tv.column(column, width=width, anchor="w")
+                self.tv.heading(column, text=header, anchor="w", command=test)
+
+            cxg.select(self.db_day_lines, self.tv, self.from_date.get())
+            self.tv.grid(column=0, row=0, sticky=(N, S, E, W))
 
     def main_loop(self):
         self.root.mainloop()
