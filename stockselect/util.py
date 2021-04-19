@@ -12,7 +12,7 @@ import win32process
 import time
 import pandas as pd
 import numpy as np
-from datasource_tushare.datasource_ts import Datasource
+import datasource_tushare.datasource_ts as dsts
 
 
 def is_zt(pre_close, close):
@@ -273,12 +273,14 @@ code_table = None
 
 
 def get_stock_name(code):
+    global code_table
     try:
-        global code_table
         if code_table is None:
-            print('loading code table...')
-            code_table = codetable.read_codetable(os.getcwd() + '/../dbms/codetable.dbm')
-            print('load code table ok')
+            code_table = {}
+            ds = dsts.Datasource()
+            df = ds.get_code_list()
+            for index in df.index:
+                code_table[df.loc[index, 'ts_code']] = df.loc[index, 'name']
         if code not in code_table:
             return ''
         else:

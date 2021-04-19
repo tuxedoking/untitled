@@ -18,7 +18,10 @@ def select(tv, start_date, max_day_count=50):
                     if close_series[j] > close:
                         if count > max_day_count:
                             item = (date, code, get_stock_name(code), count)
-                            tv.insert('', values=item)
+                            print(item)
+                            #tv.insert('', values=item)
+                            break
+                        else:
                             break
 
             # count = 0
@@ -43,12 +46,13 @@ def select(tv, start_date, max_day_count=50):
             #             break
             #     elif int(date) < start_date:
             #         break
-        db.close()
+
     except Exception as err:
         print(err)
     finally:
+        db.close()
         pass
 
 
 if __name__ == '__main__':
-    select()
+    select(tv=None, start_date='20210101')
