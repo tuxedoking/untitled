@@ -8,6 +8,7 @@ import win32gui
 from stockselect import chuang_xin_gao as cxg
 import os
 import dbm
+from stockselect import util
 
 
 class main_window:
@@ -17,6 +18,7 @@ class main_window:
         self.db_month_lines = dbm.open(os.getcwd() + '/dbms/month_line.dbm')
 
         self.tv = None
+        self.vbar = None
         self.m_pos = 0
 
         wa_pos = get_work_area()
@@ -76,7 +78,7 @@ class main_window:
         self.notebook.add(self.f2, text='周线多头排列')
         self.notebook.grid(column=0, row=0, sticky=(N, S, E, W))
 
-        self.add_tree_view_notebook(self.f1)
+        # self.add_tree_view_notebook(self.f1)
 
         self.f1.columnconfigure(0, weight=1)
         self.f1.rowconfigure(0, weight=1)
@@ -144,13 +146,28 @@ class main_window:
             self.m_pos += 1
         self.adjust_window()
 
+    def tb(self, event):
+        tree = event.widget
+        d = tree.item(tree.selection())
+        code = d['values'][1][0:6]
+        hwnd = find_ths_wnd()
+        if not hwnd:
+            return
+        util.press_code_on_ths(hwnd, code)
+
+        # for item in tree.selection():
+        #    print(item, ' =>', tree.item(item))
+
     def on_tab_changed(self, event):
         print(event.widget)
         tab_id = event.widget.select()
         index = event.widget.index(tab_id)
         print(index)
         frame = event.widget.children[tab_id.split(".")[len(tab_id.split(".")) - 1]]
-        self.tv.destroy()
+        if self.tv is not None:
+            self.tv.destroy()
+        if self.vbar is not None:
+            self.vbar.destroy()
         # self.add_tree_view_notebook(frame)
         if index == 0:
             columns = ('date', 'code', 'name', 'count')
@@ -158,18 +175,37 @@ class main_window:
             widths = (80, 60, 80, 60)
             self.tv = ttk.Treeview(frame, show='headings', columns=columns)
 
-            def test():
-                print(self.tv.identify_column(self.root.winfo_pointerx() - self.root.winfo_rootx()))
-                print(self.tv.get_children())
-                for item in self.tv.get_children():
-                    print(self.tv.item(item))
+            # def test():
+            #     print(self.tv.identify_column(self.root.winfo_pointerx() - self.root.winfo_rootx()))
+            #     print(self.tv.get_children())
+            #     for item in self.tv.get_children():
+            #         print(self.tv.item(item))
+
+            def treeview_sort_column(tv, col, reverse):
+                l = [(tv.set(k, col), k) for k in tv.get_children('')]
+                l.sort(reverse=reverse)
+
+                # rearrange items in sorted positions
+                for index, (val, k) in enumerate(l):
+                    tv.move(k, '', index)
+
+                # reverse sort next time
+                tv.heading(col, command=lambda: \
+                    treeview_sort_column(tv, col, not reverse))
 
             for (column, header, width) in zip(columns, headers, widths):
                 self.tv.column(column, width=width, anchor="w")
-                self.tv.heading(column, text=header, anchor="w", command=test)
+                self.tv.heading(column, text=header, anchor="w", command=lambda: treeview_sort_column(self.tv, column, False))
 
             cxg.select(self.db_day_lines, self.tv, self.from_date.get())
+
+            self.tv.bind('<<TreeviewSelect>>', self.tb)
             self.tv.grid(column=0, row=0, sticky=(N, S, E, W))
+
+            self.vbar = ttk.Scrollbar(frame, orient=VERTICAL, command=self.tv.yview)
+            self.tv.configure(yscrollcommand=self.vbar.set)
+            # tree.grid(row=0, column=0, sticky=NSEW)
+            self.vbar.grid(row=0, column=1, sticky=(N, S, E))
 
     def main_loop(self):
         self.root.mainloop()

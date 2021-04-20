@@ -36,30 +36,6 @@ def select(db, tv, start_date, max_day_count=50):
                             break
                         else:
                             break
-
-            # count = 0
-            # for date in sorted(lines, reverse=True):
-            #     if int(date) > end_date:
-            #         continue
-            #     elif start_date <= int(date) <= end_date:
-            #         to_date = int(date)
-            #         to_close = lines[date]['raw'][3]
-            #         for date2 in sorted(lines, reverse=True):
-            #             if date2 >= date:
-            #                 continue
-            #             else:
-            #                 if lines[date2]['raw'][3] < to_close:
-            #                     count += 1
-            #                 else:
-            #                     if count > MAX_DAY_COUNT:
-            #                         result_row = [to_date, code[0:6], get_stock_name(code), count]
-            #                         print(result_row)
-            #                     break
-            #         if count > MAX_DAY_COUNT:
-            #             break
-            #     elif int(date) < start_date:
-            #         break
-
     except Exception as err:
         print(err)
     finally:
