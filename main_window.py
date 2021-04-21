@@ -20,6 +20,7 @@ class main_window:
         self.tv = None
         self.vbar = None
         self.m_pos = 0
+        self.columns = None
 
         wa_pos = get_work_area()
         if wa_pos is None:
@@ -158,6 +159,18 @@ class main_window:
         # for item in tree.selection():
         #    print(item, ' =>', tree.item(item))
 
+    def tv_sort_column(self):
+        tv = self.tv
+        column_index = int(tv.identify_column(self.root.winfo_pointerx() - self.root.winfo_rootx())[1:])-1
+        l = [(tv.item(item)['values'], item) for item in tv.get_children('')]
+        l.sort(key=lambda s: s[0][column_index], reverse=self.columns[column_index][3])
+        self.columns[column_index][3] = not self.columns[column_index][3]
+        # print(l)
+        for i, (val, k) in enumerate(l):
+            tv.move(k, '', i)
+        tv.heading(self.columns[column_index][0], text=self.columns[column_index][1], anchor="w",
+                   command=self.tv_sort_column)
+
     def on_tab_changed(self, event):
         print(event.widget)
         tab_id = event.widget.select()
@@ -170,10 +183,9 @@ class main_window:
             self.vbar.destroy()
         # self.add_tree_view_notebook(frame)
         if index == 0:
-            columns = ('date', 'code', 'name', 'count')
-            headers = ('日期', '代码', '名称', '天数')
-            widths = (80, 60, 80, 60)
-            self.tv = ttk.Treeview(frame, show='headings', columns=columns)
+            self.columns = [['date', '日期', 60, False], ['code', '代码', 60, False], ['name', '名称', 80, False],
+                            ['count', '天数', 60, False]]
+            self.tv = ttk.Treeview(frame, show='headings', columns=[x[0] for x in self.columns])
 
             # def test():
             #     print(self.tv.identify_column(self.root.winfo_pointerx() - self.root.winfo_rootx()))
@@ -181,31 +193,23 @@ class main_window:
             #     for item in self.tv.get_children():
             #         print(self.tv.item(item))
 
-            def treeview_sort_column(tv, col, reverse):
-                l = [(tv.set(k, col), k) for k in tv.get_children('')]
-                l.sort(reverse=reverse)
-
-                # rearrange items in sorted positions
-                for index, (val, k) in enumerate(l):
-                    tv.move(k, '', index)
-
-                # reverse sort next time
-                tv.heading(col, command=lambda: \
-                    treeview_sort_column(tv, col, not reverse))
-
-            for (column, header, width) in zip(columns, headers, widths):
+            for (column, header, width, reverse) in self.columns:
                 self.tv.column(column, width=width, anchor="w")
-                self.tv.heading(column, text=header, anchor="w", command=lambda: treeview_sort_column(self.tv, column, False))
-
-            cxg.select(self.db_day_lines, self.tv, self.from_date.get())
+                self.tv.heading(column, text=header, anchor="w",
+                                command=self.tv_sort_column)
 
             self.tv.bind('<<TreeviewSelect>>', self.tb)
             self.tv.grid(column=0, row=0, sticky=(N, S, E, W))
 
             self.vbar = ttk.Scrollbar(frame, orient=VERTICAL, command=self.tv.yview)
             self.tv.configure(yscrollcommand=self.vbar.set)
-            # tree.grid(row=0, column=0, sticky=NSEW)
             self.vbar.grid(row=0, column=1, sticky=(N, S, E))
+
+            results = cxg.select(self.db_day_lines, self.from_date.get())
+            if results is None:
+                return
+            for i, result in enumerate(results):
+                self.tv.insert('', i, values=result)
 
     def main_loop(self):
         self.root.mainloop()

@@ -3,12 +3,17 @@ import pickle
 import os
 from stockselect import util
 
+result_cache = {}
 
-def select(db, tv, start_date, max_day_count=50):
+
+def select(db, start_date, max_day_count=50):
     try:
-        # file_name = os.getcwd() + '/dbms/day_line.dbm'
-        # db = dbm.open(file_name)
-        tvi = 0
+        items = []
+        cache_key = __file__ + start_date + str(max_day_count)
+        global result_cache
+        if cache_key in result_cache:
+            return result_cache[cache_key]
+
         for key in db.keys():
             data = db[key]
             df_lines = pickle.loads(data)
@@ -29,19 +34,19 @@ def select(db, tv, start_date, max_day_count=50):
                     if close_series[j] > close:
                         if count > max_day_count:
                             item = (date, code, util.get_stock_name(code), count)
+                            items.append(item)
                             print(item)
-                            tv.insert('', tvi, values=item)
-                            tvi += 1
+                            # tv.insert('', tvi, values=item)
+                            # tvi += 1
+                            # if tvi > 10:
+                            #     return
                             flag = True
                             break
                         else:
                             break
+        result_cache[cache_key] = items
+        return items
     except Exception as err:
         print(err)
-    finally:
-        # db.close()
-        pass
+        return None
 
-
-if __name__ == '__main__':
-    select(tv=None, start_date='20210101')
