@@ -5,18 +5,12 @@ from stockselect.util import find_ths_wnd
 import datetime
 import win32con
 import win32gui
-from stockselect import chuang_xin_gao as cxg
-import os
-import dbm
 from stockselect import util
+from stockselect import chuang_xin_gao
 
 
 class main_window:
     def __init__(self):
-        self.db_day_lines = dbm.open(os.getcwd() + '/dbms/day_line.dbm')
-        self.db_week_lines = dbm.open(os.getcwd() + '/dbms/week_line.dbm')
-        self.db_month_lines = dbm.open(os.getcwd() + '/dbms/month_line.dbm')
-
         self.tv = None
         self.vbar = None
         self.m_pos = 0
@@ -168,8 +162,8 @@ class main_window:
         # print(l)
         for i, (val, k) in enumerate(l):
             tv.move(k, '', i)
-        tv.heading(self.columns[column_index][0], text=self.columns[column_index][1], anchor="w",
-                   command=self.tv_sort_column)
+        # tv.heading(self.columns[column_index][0], text=self.columns[column_index][1], anchor="w",
+        #           command=self.tv_sort_column)
 
     def on_tab_changed(self, event):
         print(event.widget)
@@ -205,7 +199,9 @@ class main_window:
             self.tv.configure(yscrollcommand=self.vbar.set)
             self.vbar.grid(row=0, column=1, sticky=(N, S, E))
 
-            results = cxg.select(self.db_day_lines, self.from_date.get())
+            cxg = chuang_xin_gao.chuang_xin_gao()
+            results = cxg.select(start_date=self.from_date.get())
+            # results = cxg.select(start_date='20210101')
             if results is None:
                 return
             for i, result in enumerate(results):

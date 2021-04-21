@@ -3,19 +3,20 @@ import dbm
 
 
 class selector(object):
-    db_day_lines = dbm.open(os.getcwd() + '/../dbms/day_line.dbm')
-    db_week_lines = dbm.open(os.getcwd() + '/../dbms/week_line.dbm')
-    db_month_lines = dbm.open(os.getcwd() + '/../dbms/week_line.dbm')
     result_cache = {}
 
-    @classmethod
-    def select(cls, ):
-        cls.result_cache['bbb'] = 999
+    def __init__(self):
+        super().__init__()
+        self.db_day_lines = dbm.open(os.getcwd() + '/dbms/day_line.dbm')
+        self.db_week_lines = dbm.open(os.getcwd() + '/dbms/week_line.dbm')
+        self.db_month_lines = dbm.open(os.getcwd() + '/dbms/week_line.dbm')
+        # self.result_cache = {}
 
+    def __del__(self):
+        self.db_day_lines.close()
+        self.db_week_lines.close()
+        self.db_month_lines.close()
 
-if __name__ == '__main__':
-    print(selector.result_cache)
-    selector.result_cache['aaa'] = 666
-    print(selector.result_cache)
-    selector.hello()
-    print(selector.result_cache)
+    def select(self, **kwargs):
+        raise NotImplementedError
+

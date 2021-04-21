@@ -129,14 +129,14 @@ def get_stock_name(code):
 __end_date = 20500101
 
 if __name__ == '__main__':
-    print(get_stock_name('002351.SZ'))
-    print(get_stock_name('601598.SH'))
-    print(get_stock_name('002531.SZ'))
-    # hwnd = find_ths_wnd()
-    # if hwnd == False:
-    #     exit(0)
-    # else:
-    #     press_code_on_ths(hwnd)
+    # print(get_stock_name('002351.SZ'))
+    # print(get_stock_name('601598.SH'))
+    # print(get_stock_name('002531.SZ'))
+    hwnd = find_ths_wnd()
+    if hwnd == False:
+        exit(0)
+    else:
+        press_code_on_ths(hwnd)
 
     # a = get_work_area()
     # print(type(a))
