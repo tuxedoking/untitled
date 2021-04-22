@@ -7,6 +7,7 @@ import win32con
 import win32gui
 from stockselect import util
 from stockselect import chuang_xin_gao
+from stockselect import zhang_ting
 
 
 class main_window:
@@ -69,8 +70,9 @@ class main_window:
         self.f1 = ttk.Frame(self.notebook)  # first page, which would get widgets gridded into it
         self.f2 = ttk.Frame(self.notebook)  # second page
 
+        self.notebook.add(self.f2, text='涨停')
         self.notebook.add(self.f1, text='创新高')
-        self.notebook.add(self.f2, text='周线多头排列')
+
         self.notebook.grid(column=0, row=0, sticky=(N, S, E, W))
 
         # self.add_tree_view_notebook(self.f1)
@@ -178,26 +180,18 @@ class main_window:
         # self.add_tree_view_notebook(frame)
         if index == 0:
             self.columns = [['date', '日期', 60, False], ['code', '代码', 60, False], ['name', '名称', 80, False],
+                            ['count', '连续天数', 60, False]]
+            self.create_tv(frame)
+            zt = zhang_ting.zhang_ting()
+            results = zt.select(start_date=self.from_date.get())
+            if results is None:
+                return
+            for i, result in enumerate(results):
+                self.tv.insert('', i, values=result)
+        elif index == 1:
+            self.columns = [['date', '日期', 60, False], ['code', '代码', 60, False], ['name', '名称', 80, False],
                             ['count', '天数', 60, False]]
-            self.tv = ttk.Treeview(frame, show='headings', columns=[x[0] for x in self.columns])
-
-            # def test():
-            #     print(self.tv.identify_column(self.root.winfo_pointerx() - self.root.winfo_rootx()))
-            #     print(self.tv.get_children())
-            #     for item in self.tv.get_children():
-            #         print(self.tv.item(item))
-
-            for (column, header, width, reverse) in self.columns:
-                self.tv.column(column, width=width, anchor="w")
-                self.tv.heading(column, text=header, anchor="w",
-                                command=self.tv_sort_column)
-
-            self.tv.bind('<<TreeviewSelect>>', self.tb)
-            self.tv.grid(column=0, row=0, sticky=(N, S, E, W))
-
-            self.vbar = ttk.Scrollbar(frame, orient=VERTICAL, command=self.tv.yview)
-            self.tv.configure(yscrollcommand=self.vbar.set)
-            self.vbar.grid(row=0, column=1, sticky=(N, S, E))
+            self.create_tv(frame)
 
             cxg = chuang_xin_gao.chuang_xin_gao()
             results = cxg.select(start_date=self.from_date.get())
@@ -206,6 +200,21 @@ class main_window:
                 return
             for i, result in enumerate(results):
                 self.tv.insert('', i, values=result)
+
+    def create_tv(self, frame):
+        self.tv = ttk.Treeview(frame, show='headings', columns=[x[0] for x in self.columns])
+
+        for (column, header, width, reverse) in self.columns:
+            self.tv.column(column, width=width, anchor="w")
+            self.tv.heading(column, text=header, anchor="w",
+                            command=self.tv_sort_column)
+
+        self.tv.bind('<<TreeviewSelect>>', self.tb)
+        self.tv.grid(column=0, row=0, sticky=(N, S, E, W))
+
+        self.vbar = ttk.Scrollbar(frame, orient=VERTICAL, command=self.tv.yview)
+        self.tv.configure(yscrollcommand=self.vbar.set)
+        self.vbar.grid(row=0, column=1, sticky=(N, S, E))
 
     def main_loop(self):
         self.root.mainloop()
