@@ -6,9 +6,9 @@ import datetime
 import win32con
 import win32gui
 from stockselect import util
-from stockselect import chuang_xin_gao
-from stockselect import zhang_ting
-from stockselect import ri_xian_duo_tou_pai_lie
+from stockselect.chuang_xin_gao import chuang_xin_gao
+from stockselect.zhang_ting import zhang_ting
+from stockselect.ri_xian_duo_tou_pai_lie import ri_xian_duo_tou_pai_lie
 from stockselect.selector import selector
 
 
@@ -189,8 +189,8 @@ class main_window:
             self.columns = [['date', '日期', 60, False], ['code', '代码', 60, False], ['name', '名称', 80, False],
                             ['count', '连续天数', 60, False]]
             self.create_tv(frame)
-            selector = zhang_ting.zhang_ting()
-            results = selector.select(start_date=self.from_date.get())
+            haha = zhang_ting()
+            results = haha.select(start_date=self.from_date.get())
             if results is None:
                 return
             for i, result in enumerate(results):
@@ -200,20 +200,20 @@ class main_window:
                             ['count', '天数', 60, False]]
             self.create_tv(frame)
 
-            selector = chuang_xin_gao.chuang_xin_gao()
-            results = selector.select(start_date=self.from_date.get())
+            haha = chuang_xin_gao()
+            results = haha.select(start_date=self.from_date.get())
             # results = cxg.select(start_date='20210101')
             if results is None:
                 return
             for i, result in enumerate(results):
                 self.tv.insert('', i, values=result)
         elif index == 2:
-            self.columns = [['date', '日期', 60, False], ['code', '代码', 60, False], ['name', '名称', 80, False],
-                            ['count', '天数', 60, False]]
+            self.columns = [['date', '日期', 50, False], ['code', '代码', 50, False], ['name', '名称', 60, False],
+                            ['count', '天数', 50, False], ['count', '幅度', 50, False]]
             self.create_tv(frame)
 
-            selector = ri_xian_duo_tou_pai_lie.ri_xian_duo_tou_pai_lie()
-            results = selector.select(start_date=self.from_date.get())
+            haha = ri_xian_duo_tou_pai_lie()
+            results = haha.select(start_date=self.from_date.get())
             # results = cxg.select(start_date='20210101')
             if results is None:
                 return

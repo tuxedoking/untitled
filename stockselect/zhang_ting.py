@@ -4,9 +4,6 @@ from stockselect.selector import selector
 
 
 class zhang_ting(selector):
-    def __init__(self):
-        super().__init__()
-
     def select(self, **kwargs):
         try:
             if 'start_date' not in kwargs:
@@ -49,5 +46,6 @@ class zhang_ting(selector):
 
 
 if __name__ == '__main__':
+    selector.init_dbs()
     a = zhang_ting()
     a.select(start_date='20210101')

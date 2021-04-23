@@ -4,9 +4,6 @@ from stockselect.selector import selector
 
 
 class ri_xian_duo_tou_pai_lie(selector):
-    def __init__(self):
-        super().__init__()
-
     def select(self, **kwargs):
         try:
             if 'start_date' not in kwargs:
@@ -24,6 +21,7 @@ class ri_xian_duo_tou_pai_lie(selector):
                 code = bytes.decode(key)
                 count = 0
                 to_date = ''
+                zhang_fu = 0
 
                 for date in df_lines.index:
                     if date < start_date:
@@ -44,7 +42,7 @@ class ri_xian_duo_tou_pai_lie(selector):
                             count += 1
                     else:
                         if count >= 5:  # 连续走5天以上的多头排列
-                            item = (to_date, code, util.get_stock_name(code), count)
+                            item = (to_date, code, util.get_stock_name(code), count, zhang_fu)
                             items.append(item)
                             print(item)
                         count = 0
@@ -56,6 +54,7 @@ class ri_xian_duo_tou_pai_lie(selector):
 
 
 if __name__ == '__main__':
+    selector.init_dbs()
     a = ri_xian_duo_tou_pai_lie()
     a.select(start_date='20210101')
 

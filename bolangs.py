@@ -73,9 +73,32 @@ def cal_bo_lang_s2(dates, values):
     return bo_lang_s
 
 
+def cal_bo_lang_s_from_lines_dbm_to_bo_lang_s_dbm(file_name_lines, file_name_bo_lang_s):
+    try:
+        db_day_line_bo_lang_s = dbm.open(file_name_bo_lang_s, 'c')
+        db = dbm.open(file_name_lines)
+        for key in db.keys():
+            data = db[key]
+            df = pickle.loads(data)
+            code = bytes.decode(key)
+
+            dates = list(reversed(df.index))
+            values = list(reversed(df['close']))
+            bo_lang_s2 = cal_bo_lang_s2(dates, values)
+
+            print(code, bo_lang_s2)
+            db_day_line_bo_lang_s[code] = pickle.dumps(bo_lang_s2)
+        db.close()
+        db_day_line_bo_lang_s.close()
+    except Exception as err:
+        print(err)
+    finally:
+        pass
+
+
 if __name__ == '__main__':
     try:
-        db = dbm.open(os.getcwd() + '/dbms/day_line.dbm')
+        db = dbm.open('E:/dbms/day_line.dbm')
         # db = dbm.open(os.getcwd() + '/dbms/week_line.dbm')
         # db = dbm.open(os.getcwd() + '/dbms/month_line.dbm')
         # print(db.get(';a;a'))
@@ -94,7 +117,7 @@ if __name__ == '__main__':
     finally:
         db.close()
 
-
+'''
 def cal_bo_lang_s(lines):
     if len(lines) <= 1:
         return None
@@ -160,3 +183,4 @@ def cal_bo_lang_s(lines):
         bo_lang_s.append(bo_lang)
 
     return bo_lang_s
+'''

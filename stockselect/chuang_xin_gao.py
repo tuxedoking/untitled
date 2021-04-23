@@ -4,9 +4,6 @@ from stockselect import util
 
 
 class chuang_xin_gao(selector):
-    def __init__(self):
-        super().__init__()
-
     def select(self, **kwargs):
         try:
             if 'start_date' not in kwargs:
@@ -60,5 +57,6 @@ class chuang_xin_gao(selector):
 
 
 if __name__ == '__main__':
+    selector.init_dbs()
     a = chuang_xin_gao()
     a.select(start_date='20210101')

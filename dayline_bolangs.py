@@ -1,22 +1,6 @@
-import dbm
-import os
-import pickle
-from bolangs import cal_bo_lang_s
+import bolangs
 
 if __name__ == '__main__':
-    try:
-        db_day_line_bo_lang_s = dbm.open(os.getcwd() + '/dbms/day_line_bo_lang_s.dbm', 'c')
-        db = dbm.open(os.getcwd() + '/dbms/day_line.dbm')
-        for key in db.keys():
-            data = db[key]
-            lines2 = pickle.loads(data)
-            code = bytes.decode(key)
-            bo_lang_s2 = cal_bo_lang_s(lines2)
-            print(code, bo_lang_s2)
-            db_day_line_bo_lang_s[code] = pickle.dumps(bo_lang_s2)
-        db.close()
-        db_day_line_bo_lang_s.close()
-    except Exception as err:
-        print(err)
-    finally:
-        pass
+    file_name_lines = 'E:/dbms/day_line.dbm'
+    file_name_bo_lang_s = 'E:/dbms/day_line_bo_lang_s.dbm'
+    bolangs.cal_bo_lang_s_from_lines_dbm_to_bo_lang_s_dbm(file_name_lines, file_name_bo_lang_s)
