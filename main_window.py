@@ -6,10 +6,13 @@ import datetime
 import win32con
 import win32gui
 from stockselect import util
+from stockselect.selector import selector
 from stockselect.chuang_xin_gao import chuang_xin_gao
 from stockselect.zhang_ting import zhang_ting
 from stockselect.ri_xian_duo_tou_pai_lie import ri_xian_duo_tou_pai_lie
-from stockselect.selector import selector
+from stockselect.zhou_xian_duo_tou_pai_lie import zhou_xian_duo_tou_pai_lie
+from stockselect.yue_xian_duo_tou_pai_lie import yue_xian_duo_tou_pai_lie
+from stockselect.yue_xian_lian_yang import yue_xian_lian_yang
 
 
 class main_window:
@@ -75,10 +78,16 @@ class main_window:
         self.f1 = ttk.Frame(self.notebook)  # first page, which would get widgets gridded into it
         self.f2 = ttk.Frame(self.notebook)  # second page
         self.f3 = ttk.Frame(self.notebook)  # second page
+        self.f4 = ttk.Frame(self.notebook)
+        self.f5 = ttk.Frame(self.notebook)
+        self.f6 = ttk.Frame(self.notebook)
 
         self.notebook.add(self.f1, text='涨停')
         self.notebook.add(self.f2, text='创新高')
         self.notebook.add(self.f3, text='日线多头排列')
+        self.notebook.add(self.f4, text='周线多头排列')
+        self.notebook.add(self.f5, text='月线多头排列')
+        self.notebook.add(self.f6, text='月线连阳')
 
         self.notebook.grid(column=0, row=0, sticky=(N, S, E, W))
 
@@ -92,6 +101,15 @@ class main_window:
 
         self.f3.columnconfigure(0, weight=1)
         self.f3.rowconfigure(0, weight=1)
+
+        self.f4.columnconfigure(0, weight=1)
+        self.f4.rowconfigure(0, weight=1)
+
+        self.f5.columnconfigure(0, weight=1)
+        self.f5.rowconfigure(0, weight=1)
+
+        self.f6.columnconfigure(0, weight=1)
+        self.f6.rowconfigure(0, weight=1)
 
         self.frame2.columnconfigure(0, weight=1)
         self.frame2.rowconfigure(0, weight=1)
@@ -207,7 +225,39 @@ class main_window:
 
             haha = ri_xian_duo_tou_pai_lie()
             results = haha.select(start_date=self.from_date.get())
-            # results = cxg.select(start_date='20210101')
+            if results is None:
+                return
+            for i, result in enumerate(results):
+                self.tv.insert('', i, values=result)
+        elif index == 3:
+            self.columns = [['date', '日期', 50, False], ['code', '代码', 50, False], ['name', '名称', 60, False],
+                            ['count', '周数', 50, False], ['fu_du', '幅度', 50, False]]
+            self.create_tv(frame)
+
+            haha = zhou_xian_duo_tou_pai_lie()
+            results = haha.select(start_date=self.from_date_week.get())
+            if results is None:
+                return
+            for i, result in enumerate(results):
+                self.tv.insert('', i, values=result)
+        elif index == 4:
+            self.columns = [['date', '日期', 50, False], ['code', '代码', 50, False], ['name', '名称', 60, False],
+                            ['count', '月数', 50, False], ['fu_du', '幅度', 50, False]]
+            self.create_tv(frame)
+
+            haha = yue_xian_duo_tou_pai_lie()
+            results = haha.select(start_date=self.from_date_month.get())
+            if results is None:
+                return
+            for i, result in enumerate(results):
+                self.tv.insert('', i, values=result)
+        elif index == 5:
+            self.columns = [['date', '日期', 50, False], ['code', '代码', 50, False], ['name', '名称', 60, False],
+                            ['fu_du', '幅度', 50, False], ['count', '连阳月数', 50, False], ]
+            self.create_tv(frame)
+
+            haha = yue_xian_lian_yang()
+            results = haha.select(start_date=self.from_date_month.get())
             if results is None:
                 return
             for i, result in enumerate(results):
