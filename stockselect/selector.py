@@ -15,7 +15,7 @@ class selector(object):
         selector.result_cache = {}
         selector.db_day_lines = dbm.open('E:/dbms/day_line.dbm')
         selector.db_week_lines = dbm.open('E:/dbms/week_line.dbm')
-        selector.db_month_lines = dbm.open('E:/dbms/week_line.dbm')
+        selector.db_month_lines = dbm.open('E:/dbms/month_line.dbm')
 
     @staticmethod
     def close_dbs():

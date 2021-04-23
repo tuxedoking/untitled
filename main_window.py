@@ -30,23 +30,27 @@ class main_window:
         self.content = ttk.Frame(self.root)
         self.frame = ttk.Frame(self.content)
 
-        self.reload_button = ttk.Button(self.frame, text="重新载入")
+        self.reload_button = ttk.Button(self.frame, text="重新载入", width=7)
         self.left_button = ttk.Button(self.frame, text="<", width=1, command=self.on_adjust_left)
-        self.adjust_position_button = ttk.Button(self.frame, text="调整位置", command=self.on_adjust_position_button)
+        self.adjust_position_button = ttk.Button(self.frame, text="调整位置", width=7, command=self.on_adjust_position_button)
         self.right_button = ttk.Button(self.frame, text=">", width=1, command=self.on_adjust_right)
-        self.from_label = ttk.Label(self.frame, text="开始")
+        self.from_label = ttk.Label(self.frame, text="开始(日)")
         self.from_date = StringVar()
-        self.from_entry = ttk.Entry(self.frame, width=10, textvariable=self.from_date)
+        self.from_entry = ttk.Entry(self.frame, width=8, textvariable=self.from_date)
         self.from_date.set((datetime.datetime.today() - datetime.timedelta(100)).strftime('%Y%m%d'))
-        self.to_label = ttk.Label(self.frame, text="结束")
-        self.to_date = StringVar()
-        self.to_entry = ttk.Entry(self.frame, width=10, textvariable=self.to_date)
-        self.to_date.set(datetime.datetime.today().strftime('%Y%m%d'))
+        self.from_label_week = ttk.Label(self.frame, text="开始(周)")
+        self.from_date_week = StringVar()
+        self.from_date_week_entry = ttk.Entry(self.frame, width=8, textvariable=self.from_date_week)
+        self.from_date_week.set((datetime.datetime.today() - datetime.timedelta(300)).strftime('%Y%m%d'))
+        self.from_label_month = ttk.Label(self.frame, text="开始(月)")
+        self.from_date_month = StringVar()
+        self.from_date_month_entry = ttk.Entry(self.frame, width=8, textvariable=self.from_date_month)
+        self.from_date_month.set((datetime.datetime.today() - datetime.timedelta(500)).strftime('%Y%m%d'))
 
         self.frame2 = ttk.Frame(self.content)
 
         self.content.grid(column=0, row=0, sticky=(N, S, E, W))
-        self.frame.grid(column=0, row=0, columnspan=8, rowspan=1, sticky=(N, S, E, W))
+        self.frame.grid(column=0, row=0, columnspan=10, rowspan=1, sticky=(N, S, E, W))
         self.frame2.grid(column=0, row=1, sticky=(N, S, E, W))
         self.reload_button.grid(column=0, row=0)
         self.left_button.grid(column=1, row=0)
@@ -54,8 +58,10 @@ class main_window:
         self.right_button.grid(column=3, row=0)
         self.from_label.grid(column=4, row=0)
         self.from_entry.grid(column=5, row=0)
-        self.to_label.grid(column=6, row=0)
-        self.to_entry.grid(column=7, row=0)
+        self.from_label_week.grid(column=6, row=0)
+        self.from_date_week_entry.grid(column=7, row=0)
+        self.from_label_month.grid(column=8, row=0)
+        self.from_date_month_entry.grid(column=9, row=0)
 
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
@@ -63,9 +69,6 @@ class main_window:
         self.content.columnconfigure(0, weight=1)
         self.content.rowconfigure(0, weight=0)
         self.content.rowconfigure(1, weight=1)
-
-        # frame.rowconfigure(0, weight=1)
-        # frame.rowconfigure(1, weight=1)
 
         self.notebook = ttk.Notebook(self.frame2)
 
@@ -95,34 +98,24 @@ class main_window:
 
         self.notebook.bind("<<NotebookTabChanged>>", self.on_tab_changed)
 
-    def add_tree_view_notebook(self, frame, tab_index=0):
-        if tab_index == 0:
-            columns = ('date', 'code', 'name', 'count')
-            headers = ('日期', '代码', '名称', '天数')
-            widths = (80, 60, 80, 60)
-        self.tv = ttk.Treeview(frame, show='headings', columns=columns)
-
-        def test():
-            print(self.tv.identify_column(self.root.winfo_pointerx() - self.root.winfo_rootx()))
-            print(self.tv.get_children())
-            for item in self.tv.get_children():
-                print(self.tv.item(item))
-
-        for (column, header, width) in zip(columns, headers, widths):
-            self.tv.column(column, width=width, anchor="w")
-            self.tv.heading(column, text=header, anchor="w", command=test)
-
-        # contacts = [
-        #     ('张三', '1870591xxxx', 'zhang@qq.com', '腾讯'),
-        #     ('李斯', '1589928xxxx', 'lisi@google.com', '谷歌'),
-        #     ('王武', '1340752xxxx', 'wangwu@baidu.com', '微软'),
-        #     ('麻溜儿', '1361601xxxx', 'maliur@alibaba.com', '阿里'),
-        #     ('郑和', '1899986xxxx', 'zhenghe@163.com', '网易'),
-        # ]
-        # for i, person in enumerate(contacts):
-        #     self.tv.insert('', i, values=person)
-
-        self.tv.grid(column=0, row=0, sticky=(N, S, E, W))
+    # def add_tree_view_notebook(self, frame, tab_index=0):
+    #     if tab_index == 0:
+    #         columns = ('date', 'code', 'name', 'count')
+    #         headers = ('日期', '代码', '名称', '天数')
+    #         widths = (80, 60, 80, 60)
+    #     self.tv = ttk.Treeview(frame, show='headings', columns=columns)
+    #
+    #     def test():
+    #         print(self.tv.identify_column(self.root.winfo_pointerx() - self.root.winfo_rootx()))
+    #         print(self.tv.get_children())
+    #         for item in self.tv.get_children():
+    #             print(self.tv.item(item))
+    #
+    #     for (column, header, width) in zip(columns, headers, widths):
+    #         self.tv.column(column, width=width, anchor="w")
+    #         self.tv.heading(column, text=header, anchor="w", command=test
+    #
+    #     self.tv.grid(column=0, row=0, sticky=(N, S, E, W))
 
     def adjust_window(self):
         wa_pos2 = get_work_area()
@@ -209,7 +202,7 @@ class main_window:
                 self.tv.insert('', i, values=result)
         elif index == 2:
             self.columns = [['date', '日期', 50, False], ['code', '代码', 50, False], ['name', '名称', 60, False],
-                            ['count', '天数', 50, False], ['count', '幅度', 50, False]]
+                            ['count', '天数', 50, False], ['fu_du', '幅度', 50, False]]
             self.create_tv(frame)
 
             haha = ri_xian_duo_tou_pai_lie()

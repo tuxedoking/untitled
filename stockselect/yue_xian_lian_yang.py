@@ -3,7 +3,7 @@ from stockselect import util
 from stockselect.selector import selector
 
 
-class yue_xian_san_lian_yang(selector):
+class yue_xian_lian_yang(selector):
     def select(self, **kwargs):
         try:
             if 'start_date' not in kwargs:
@@ -49,8 +49,8 @@ class yue_xian_san_lian_yang(selector):
 
 if __name__ == '__main__':
     selector.init_dbs()
-    a = yue_xian_san_lian_yang()
-    a.select(start_date='20210101')
+    a = yue_xian_lian_yang()
+    a.select(start_date='20200101')
 
 # import dbm
 # import pickle
