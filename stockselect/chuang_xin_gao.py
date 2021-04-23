@@ -22,8 +22,8 @@ class chuang_xin_gao(selector):
             if cache_key in selector.result_cache:
                 return selector.result_cache[cache_key]
 
-            for key in self.db_day_lines.keys():
-                data = self.db_day_lines[key]
+            for key in selector.db_day_lines.keys():
+                data = selector.db_day_lines[key]
                 df_lines = pickle.loads(data)
                 code = bytes.decode(key)
                 # close_series = df_lines[df_lines.index >= start_date]['close']

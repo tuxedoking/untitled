@@ -18,20 +18,18 @@ class zhang_ting(selector):
             if cache_key in selector.result_cache:
                 return selector.result_cache[cache_key]
 
-            for key in self.db_day_lines.keys():
-                data = self.db_day_lines[key]
+            for key in selector.db_day_lines.keys():
+                data = selector.db_day_lines[key]
                 df_lines = pickle.loads(data)
                 code = bytes.decode(key)
                 count = 0
                 to_date = ''
-                df_lines = df_lines[df_lines.index >= start_date][['pre_close', 'close']]
+                # df_lines = df_lines[df_lines.index >= start_date][['pre_close', 'close']]
 
                 for date in df_lines.index:
-                    # if date < start_date:
-                    #     break
-                    pre_close = df_lines.loc[date, 'pre_close']
-                    close = df_lines.loc[date, 'close']
-                    b = util.is_zt(pre_close, close)
+                    if date < start_date:
+                        break
+                    b = util.is_zt(df_lines.loc[date, 'pre_close'], df_lines.loc[date, 'close'])
                     if b is True:
                         # item = (df_lines.loc(index, 'trade_date'), code, get_stock_name(code), count)
                         if count == 0:

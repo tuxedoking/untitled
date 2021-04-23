@@ -8,6 +8,8 @@ import win32gui
 from stockselect import util
 from stockselect import chuang_xin_gao
 from stockselect import zhang_ting
+from stockselect import ri_xian_duo_tou_pai_lie
+from stockselect.selector import selector
 
 
 class main_window:
@@ -69,9 +71,11 @@ class main_window:
 
         self.f1 = ttk.Frame(self.notebook)  # first page, which would get widgets gridded into it
         self.f2 = ttk.Frame(self.notebook)  # second page
+        self.f3 = ttk.Frame(self.notebook)  # second page
 
-        self.notebook.add(self.f2, text='涨停')
-        self.notebook.add(self.f1, text='创新高')
+        self.notebook.add(self.f1, text='涨停')
+        self.notebook.add(self.f2, text='创新高')
+        self.notebook.add(self.f3, text='日线多头排列')
 
         self.notebook.grid(column=0, row=0, sticky=(N, S, E, W))
 
@@ -82,6 +86,9 @@ class main_window:
 
         self.f2.columnconfigure(0, weight=1)
         self.f2.rowconfigure(0, weight=1)
+
+        self.f3.columnconfigure(0, weight=1)
+        self.f3.rowconfigure(0, weight=1)
 
         self.frame2.columnconfigure(0, weight=1)
         self.frame2.rowconfigure(0, weight=1)
@@ -182,8 +189,8 @@ class main_window:
             self.columns = [['date', '日期', 60, False], ['code', '代码', 60, False], ['name', '名称', 80, False],
                             ['count', '连续天数', 60, False]]
             self.create_tv(frame)
-            zt = zhang_ting.zhang_ting()
-            results = zt.select(start_date=self.from_date.get())
+            selector = zhang_ting.zhang_ting()
+            results = selector.select(start_date=self.from_date.get())
             if results is None:
                 return
             for i, result in enumerate(results):
@@ -193,8 +200,20 @@ class main_window:
                             ['count', '天数', 60, False]]
             self.create_tv(frame)
 
-            cxg = chuang_xin_gao.chuang_xin_gao()
-            results = cxg.select(start_date=self.from_date.get())
+            selector = chuang_xin_gao.chuang_xin_gao()
+            results = selector.select(start_date=self.from_date.get())
+            # results = cxg.select(start_date='20210101')
+            if results is None:
+                return
+            for i, result in enumerate(results):
+                self.tv.insert('', i, values=result)
+        elif index == 2:
+            self.columns = [['date', '日期', 60, False], ['code', '代码', 60, False], ['name', '名称', 80, False],
+                            ['count', '天数', 60, False]]
+            self.create_tv(frame)
+
+            selector = ri_xian_duo_tou_pai_lie.ri_xian_duo_tou_pai_lie()
+            results = selector.select(start_date=self.from_date.get())
             # results = cxg.select(start_date='20210101')
             if results is None:
                 return
@@ -221,5 +240,7 @@ class main_window:
 
 
 if __name__ == '__main__':
+    selector.init_dbs()
     mw = main_window()
     mw.main_loop()
+    selector.close_dbs()
