@@ -116,25 +116,6 @@ class main_window:
 
         self.notebook.bind("<<NotebookTabChanged>>", self.on_tab_changed)
 
-    # def add_tree_view_notebook(self, frame, tab_index=0):
-    #     if tab_index == 0:
-    #         columns = ('date', 'code', 'name', 'count')
-    #         headers = ('日期', '代码', '名称', '天数')
-    #         widths = (80, 60, 80, 60)
-    #     self.tv = ttk.Treeview(frame, show='headings', columns=columns)
-    #
-    #     def test():
-    #         print(self.tv.identify_column(self.root.winfo_pointerx() - self.root.winfo_rootx()))
-    #         print(self.tv.get_children())
-    #         for item in self.tv.get_children():
-    #             print(self.tv.item(item))
-    #
-    #     for (column, header, width) in zip(columns, headers, widths):
-    #         self.tv.column(column, width=width, anchor="w")
-    #         self.tv.heading(column, text=header, anchor="w", command=test
-    #
-    #     self.tv.grid(column=0, row=0, sticky=(N, S, E, W))
-
     def adjust_window(self):
         wa_pos2 = get_work_area()
         width = int((wa_pos2[2] - wa_pos2[0]) * self.m_pos / 24)
@@ -256,7 +237,7 @@ class main_window:
                             ['fu_du', '幅度', 50, False], ['count', '连阳月数', 50, False], ]
             self.create_tv(frame)
 
-            haha = yue_xian_lian_yang()
+            haha = yue_xian_duo_tou_pai_lie()
             results = haha.select(start_date=self.from_date_month.get())
             if results is None:
                 return
@@ -287,3 +268,23 @@ if __name__ == '__main__':
     mw = main_window()
     mw.main_loop()
     selector.close_dbs()
+
+
+    # def add_tree_view_notebook(self, frame, tab_index=0):
+    #     if tab_index == 0:
+    #         columns = ('date', 'code', 'name', 'count')
+    #         headers = ('日期', '代码', '名称', '天数')
+    #         widths = (80, 60, 80, 60)
+    #     self.tv = ttk.Treeview(frame, show='headings', columns=columns)
+    #
+    #     def test():
+    #         print(self.tv.identify_column(self.root.winfo_pointerx() - self.root.winfo_rootx()))
+    #         print(self.tv.get_children())
+    #         for item in self.tv.get_children():
+    #             print(self.tv.item(item))
+    #
+    #     for (column, header, width) in zip(columns, headers, widths):
+    #         self.tv.column(column, width=width, anchor="w")
+    #         self.tv.heading(column, text=header, anchor="w", command=test
+    #
+    #     self.tv.grid(column=0, row=0, sticky=(N, S, E, W))
