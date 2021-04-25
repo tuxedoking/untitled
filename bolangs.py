@@ -27,6 +27,7 @@ def cal_bo_lang_s2(dates, values):
                 nz_count += 1
                 if nz_count >= 5:
                     bo_lang = {'from': dates[qu_shi_from_index], 'to': dates[qu_shi_to_index],
+                               'from_value': values[qu_shi_from_index], 'to_value': values[qu_shi_to_index],
                                'qu_shi': '上' if qu_shi == 1 else '下'}
                     bo_lang_s.append(bo_lang)
                     qu_shi_from_index = qu_shi_to_index
@@ -47,6 +48,7 @@ def cal_bo_lang_s2(dates, values):
                 nz_count += 1
                 if nz_count >= 5:
                     bo_lang = {'from': dates[qu_shi_from_index], 'to': dates[qu_shi_to_index],
+                               'from_value': values[qu_shi_from_index], 'to_value': values[qu_shi_to_index],
                                'qu_shi': '上' if qu_shi == 1 else '下'}
                     bo_lang_s.append(bo_lang)
                     qu_shi_from_index = qu_shi_to_index
@@ -62,11 +64,13 @@ def cal_bo_lang_s2(dates, values):
         i += 1
 
     bo_lang = {'from': dates[qu_shi_from_index], 'to': dates[qu_shi_to_index],
+               'from_value': values[qu_shi_from_index], 'to_value': values[qu_shi_to_index],
                'qu_shi': '上' if qu_shi == 1 else '下'}
     bo_lang_s.append(bo_lang)
 
     if qu_shi_to_index < len(dates) - 1:
         bo_lang = {'from': dates[qu_shi_to_index], 'to': dates[-1],
+                   'from_value': values[qu_shi_to_index], 'to_value': values[-1],
                    'qu_shi': '下' if qu_shi == 1 else '上'}
         bo_lang_s.append(bo_lang)
 
@@ -85,6 +89,9 @@ def cal_bo_lang_s_from_lines_dbm_to_bo_lang_s_dbm(file_name_lines, file_name_bo_
             dates = list(reversed(df.index))
             values = list(reversed(df['close']))
             bo_lang_s2 = cal_bo_lang_s2(dates, values)
+
+            if bo_lang_s2 is None:
+                continue
 
             print(code, bo_lang_s2)
             db_day_line_bo_lang_s[code] = pickle.dumps(bo_lang_s2)

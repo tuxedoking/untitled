@@ -12,6 +12,7 @@ from stockselect.zhang_ting import zhang_ting
 from stockselect.ri_xian_duo_tou_pai_lie import ri_xian_duo_tou_pai_lie
 from stockselect.zhou_xian_duo_tou_pai_lie import zhou_xian_duo_tou_pai_lie
 from stockselect.yue_xian_duo_tou_pai_lie import yue_xian_duo_tou_pai_lie
+from stockselect.up_down import up_down
 from stockselect.yue_xian_lian_yang import yue_xian_lian_yang
 
 
@@ -81,6 +82,7 @@ class main_window:
         self.f4 = ttk.Frame(self.notebook)
         self.f5 = ttk.Frame(self.notebook)
         self.f6 = ttk.Frame(self.notebook)
+        self.f7 = ttk.Frame(self.notebook)
 
         self.notebook.add(self.f1, text='涨停')
         self.notebook.add(self.f2, text='创新高')
@@ -88,6 +90,7 @@ class main_window:
         self.notebook.add(self.f4, text='周线多头排列')
         self.notebook.add(self.f5, text='月线多头排列')
         self.notebook.add(self.f6, text='月线连阳')
+        self.notebook.add(self.f7, text='上涨回调')
 
         self.notebook.grid(column=0, row=0, sticky=(N, S, E, W))
 
@@ -110,6 +113,9 @@ class main_window:
 
         self.f6.columnconfigure(0, weight=1)
         self.f6.rowconfigure(0, weight=1)
+
+        self.f7.columnconfigure(0, weight=1)
+        self.f7.rowconfigure(0, weight=1)
 
         self.frame2.columnconfigure(0, weight=1)
         self.frame2.rowconfigure(0, weight=1)
@@ -238,6 +244,17 @@ class main_window:
             self.create_tv(frame)
 
             haha = yue_xian_duo_tou_pai_lie()
+            results = haha.select(start_date=self.from_date_month.get())
+            if results is None:
+                return
+            for i, result in enumerate(results):
+                self.tv.insert('', i, values=result)
+        elif index == 6:
+            self.columns = [['date', '日期', 50, False], ['code', '代码', 50, False], ['name', '名称', 60, False],
+                            ['fu_du', '上涨幅度', 50, False], ['fu_du2', '回调幅度', 50, False], ]
+            self.create_tv(frame)
+
+            haha = up_down()
             results = haha.select(start_date=self.from_date_month.get())
             if results is None:
                 return
