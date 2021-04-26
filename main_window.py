@@ -163,8 +163,10 @@ class main_window:
     def tv_sort_column(self):
         tv = self.tv
         column_index = int(tv.identify_column(self.root.winfo_pointerx() - self.root.winfo_rootx())[1:])-1
-        l = [(tv.item(item)['values'], item) for item in tv.get_children('')]
-        l.sort(key=lambda s: s[0][column_index], reverse=self.columns[column_index][3])
+        l = [(tv.item(item)['values'][column_index], item) for item in tv.get_children('')]
+        l.sort(key=lambda s: self.columns[column_index][4](s[0]), reverse=self.columns[column_index][3])
+        # print(l)
+        # l.sort(key=lambda s: s[0][4](s[0]), reverse=self.columns[column_index][3])
         self.columns[column_index][3] = not self.columns[column_index][3]
         # print(l)
         for i, (val, k) in enumerate(l):
@@ -184,8 +186,8 @@ class main_window:
             self.vbar.destroy()
         # self.add_tree_view_notebook(frame)
         if index == 0:
-            self.columns = [['date', '日期', 60, False], ['code', '代码', 60, False], ['name', '名称', 80, False],
-                            ['count', '连续天数', 60, False]]
+            self.columns = [['date', '日期', 60, False, str], ['code', '代码', 60, False, str],
+                            ['name', '名称', 80, False, str], ['count', '连续天数', 60, False, int]]
             self.create_tv(frame)
             haha = zhang_ting()
             results = haha.select(start_date=self.from_date.get())
@@ -194,8 +196,8 @@ class main_window:
             for i, result in enumerate(results):
                 self.tv.insert('', i, values=result)
         elif index == 1:
-            self.columns = [['date', '日期', 60, False], ['code', '代码', 60, False], ['name', '名称', 80, False],
-                            ['count', '天数', 60, False]]
+            self.columns = [['date', '日期', 60, False, str], ['code', '代码', 60, False, str], ['name', '名称', 80, False, str],
+                            ['count', '天数', 60, False, int]]
             self.create_tv(frame)
 
             haha = chuang_xin_gao()
@@ -206,8 +208,9 @@ class main_window:
             for i, result in enumerate(results):
                 self.tv.insert('', i, values=result)
         elif index == 2:
-            self.columns = [['date', '日期', 50, False], ['code', '代码', 50, False], ['name', '名称', 60, False],
-                            ['count', '天数', 50, False], ['fu_du', '幅度', 50, False]]
+            self.columns = [['date', '日期', 50, False, str], ['code', '代码', 50, False, str],
+                            ['name', '名称', 60, False, str], ['count', '天数', 50, False, int],
+                            ['fu_du', '幅度', 50, False, float]]
             self.create_tv(frame)
 
             haha = ri_xian_duo_tou_pai_lie()
@@ -217,8 +220,9 @@ class main_window:
             for i, result in enumerate(results):
                 self.tv.insert('', i, values=result)
         elif index == 3:
-            self.columns = [['date', '日期', 50, False], ['code', '代码', 50, False], ['name', '名称', 60, False],
-                            ['count', '周数', 50, False], ['fu_du', '幅度', 50, False]]
+            self.columns = [['date', '日期', 50, False, str], ['code', '代码', 50, False, str],
+                            ['name', '名称', 60, False, str], ['count', '周数', 50, False, int],
+                            ['fu_du', '幅度', 50, False, float]]
             self.create_tv(frame)
 
             haha = zhou_xian_duo_tou_pai_lie()
@@ -228,8 +232,9 @@ class main_window:
             for i, result in enumerate(results):
                 self.tv.insert('', i, values=result)
         elif index == 4:
-            self.columns = [['date', '日期', 50, False], ['code', '代码', 50, False], ['name', '名称', 60, False],
-                            ['count', '月数', 50, False], ['fu_du', '幅度', 50, False]]
+            self.columns = [['date', '日期', 50, False, str], ['code', '代码', 50, False, str],
+                            ['name', '名称', 60, False, str], ['count', '月数', 50, False, int],
+                            ['fu_du', '幅度', 50, False, float]]
             self.create_tv(frame)
 
             haha = yue_xian_duo_tou_pai_lie()
@@ -239,19 +244,22 @@ class main_window:
             for i, result in enumerate(results):
                 self.tv.insert('', i, values=result)
         elif index == 5:
-            self.columns = [['date', '日期', 50, False], ['code', '代码', 50, False], ['name', '名称', 60, False],
-                            ['fu_du', '幅度', 50, False], ['count', '连阳月数', 50, False], ]
+            self.columns = [['date', '日期', 50, False, str], ['code', '代码', 50, False, str],
+                            ['name', '名称', 60, False, str], ['fu_du', '幅度', 50, False, float],
+                            ['count', '连阳月数', 50, False, int]]
+
             self.create_tv(frame)
 
-            haha = yue_xian_duo_tou_pai_lie()
+            haha = yue_xian_lian_yang()
             results = haha.select(start_date=self.from_date_month.get())
             if results is None:
                 return
             for i, result in enumerate(results):
                 self.tv.insert('', i, values=result)
         elif index == 6:
-            self.columns = [['date', '日期', 50, False], ['code', '代码', 50, False], ['name', '名称', 60, False],
-                            ['fu_du', '上涨幅度', 50, False], ['fu_du2', '回调幅度', 50, False], ]
+            self.columns = [['date', '日期', 50, False, str], ['code', '代码', 50, False, str],
+                            ['name', '名称', 60, False, str], ['fu_du', '上涨幅度', 50, False, float],
+                            ['fu_du2', '回调幅度', 50, False, float]]
             self.create_tv(frame)
 
             haha = up_down()
@@ -264,7 +272,7 @@ class main_window:
     def create_tv(self, frame):
         self.tv = ttk.Treeview(frame, show='headings', columns=[x[0] for x in self.columns])
 
-        for (column, header, width, reverse) in self.columns:
+        for (column, header, width, reverse, sort_type) in self.columns:
             self.tv.column(column, width=width, anchor="w")
             self.tv.heading(column, text=header, anchor="w",
                             command=self.tv_sort_column)
